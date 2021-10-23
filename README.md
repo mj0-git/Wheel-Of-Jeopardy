@@ -11,7 +11,12 @@ Server outputs message indicating when a user connects ->Andrea
  
 how demo of an object moving on screen -> Meraj 
  - All players should be able to see the same object moving  
+ - https://devdojo.com/dennis/use-socketio-to-build-a-game#adding-our-variables
 
 Message on screen for everyone if user leaves (their session ends) -> Cedric 
  - Game should end if player can’t reconnect 
 
+
+Download and run: 
+- install nodejs + dependencies 
+- nodemon server/server.js

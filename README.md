@@ -1,5 +1,14 @@
 # Wheel-Of-Jeopardy
 
+Install: 
+1. Install nodejs 
+2. npm install -g nodemon
+3. npm install --save express socket.io
+
+Run Command:  
+- nodemon server/server.js
+
+
 Database for questions ->Caitlyn 
  - Press button on client, display question (or text message) on page 
 

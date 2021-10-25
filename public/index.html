@@ -19,7 +19,15 @@
     </button>
     <button type="button" id="startButton" class="btn-start btn btn-lg">Start
     </button>
-
+	<form id="nameForm" action="">
+      Name: <input type="text" id="nameSubmit"><br>
+      <input type="submit" value="Submit">
+    </form>
+	<div id="playerListDiv">	
+		<h4 id="playerListHeading">Current Players</h4>
+		<ul id="players">
+		</ul>
+	</div>
 </section>
     <!-- Socket.IO Javacript -->
     <script src="/socket.io/socket.io.js"></script>

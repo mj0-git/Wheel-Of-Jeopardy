@@ -1,8 +1,8 @@
 let socket = io();
 let crazyButton = document.getElementById('crazyButton');
 let startButton = document.getElementById('startButton');
-let form = document.getElementById('nameForm');
-let input = document.getElementById('nameSubmit');
+let nameForm = document.getElementById('nameForm');
+let nameInput = document.getElementById('nameSubmit');
 let playerList = document.getElementById('players');
 let playerListDiv = document.getElementById('playerListDiv');
 let playerListHeading = document.getElementById('playerListHeading');
@@ -19,14 +19,14 @@ crazyButton.addEventListener('click', () => {
 })
 
 
-form.addEventListener('submit', sendGotNameMessage);
+nameForm.addEventListener('submit', sendGotNameMessage);
 
 //emit message when name is entered in form
 function sendGotNameMessage(e) {
 	e.preventDefault();
-	socket.emit('gotName', input.value);
-	form.style.display = 'none';
-	input.value = "";
+	socket.emit('gotName', nameInput.value);
+	nameForm.style.display = 'none';
+	nameInput.value = "";
 }
 
 // update list on client with player names who are waiting
@@ -44,7 +44,7 @@ function updatePlayerList(names) {
 
 socket.on('connect', () => {
 	playerListDiv.style.display = 'none';
-	form.style.display = 'block';
+	nameForm.style.display = 'block';
 	playerListHeading.innerText = "Connected Players";
 });
 
@@ -58,6 +58,7 @@ socket.on('joinGame', (info) => {
 
 socket.on('updateWaitingList', (playerNames) => {
 	 updatePlayerList(playerNames);
+});
 
 questionButton.addEventListener('click', () => {
     socket.emit('questionIsClicked');
@@ -66,6 +67,7 @@ questionButton.addEventListener('click', () => {
 
 socket.on('restart_game', (data) =>{
     alert(data)
+
     restartGame();
 });
 
@@ -96,4 +98,7 @@ function goCrazy(offLeft, offTop) {
 function restartGame() {
     startButton.style.display = "block";
     crazyButton.style.display = "none";
+    document.getElementById('messages').innerHTML = "";
+    playerListHeading.innerText = "Connected Players";
+    playerListDiv.style.display = 'block';
 }

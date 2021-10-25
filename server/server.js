@@ -91,11 +91,11 @@ io.on('connection', (socket) => {
         messageClients();
 		if (sessionData["players"][socket.id]["gameId"] != null){
 			console.log("player left the game");
-			let gameId = sessionData["players"][socket.id]["gameId"];
-			let pos = sessionData[gameId].indexOf(socket.id);
+			var gameId = sessionData["players"][socket.id]["gameId"];
+			var pos = sessionData[gameId].indexOf(socket.id);
 			sessionData[gameId].splice(pos, 1);
 		} else {
-			let pos = sessionData["waitingPlayers"].indexOf(socket.id)
+			var pos = sessionData["waitingPlayers"].indexOf(socket.id)
 			if (pos >= 0){
 				sessionData["waitingPlayers"].splice(pos, 1);
 			} 
@@ -104,6 +104,17 @@ io.on('connection', (socket) => {
 		delete sessionData["players"][socket.id];
 		
 	})
+    socket.on('restart_game', () => {
+	
+	if (sessionData["players"][socket.id]["gameId"] != null){
+		var gameId = sessionData["players"][socket.id]["gameId"];
+		var pos = sessionData[gameId].indexOf(socket.id);
+		sessionData[gameId].splice(pos, 1);
+		socket.leave(gameId);
+		io.to(socket.id).emit("gotName", sessionData["players"][socket.id]["name"]);
+	}
+    });
+
     socket.on('chat message', (msg) => {
         console.log('message: ' + msg);
     });

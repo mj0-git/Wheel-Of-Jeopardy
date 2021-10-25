@@ -13,6 +13,19 @@ let io = socketIO(server);
 
 app.use(express.static(publicPath));
 
+var mysql = require('mysql2');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "trivial_admin",
+  password: "password",
+  database: "jeopardy"
+});
+
+con.connect(function(err) {
+    if (err) throw err;
+});
+
 server.listen(port, ()=> {
     console.log(`Server is up on port ${port}.`)
 });
@@ -75,6 +88,7 @@ io.on('connection', (socket) => {
 	
 	socket.on('disconnect', () => {
         console.log(sessionData["players"][socket.id]["name"] + " has disconnected.");
+        messageClients();
 		if (sessionData["players"][socket.id]["gameId"] != null){
 			console.log("player left the game");
 			let gameId = sessionData["players"][socket.id]["gameId"];
@@ -90,7 +104,29 @@ io.on('connection', (socket) => {
 		delete sessionData["players"][socket.id];
 		
 	})
+    socket.on('chat message', (msg) => {
+        console.log('message: ' + msg);
+    });
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+    });
+    socket.on('questionIsClicked', (data) => {
+        con.connect(function(err) {
+            if (err) throw err;
+            con.query("SELECT * FROM questions", function (err, result, fields) {
+              if (err) throw err;
+              console.log(result);
+            });
+          });
+        io.emit('questionIsClicked', data);
+    });
+
 });
+
+function messageClients() {
+    io.emit("restart_game", "A player has left the game. Restarting game!");
+}
+
 
 
 

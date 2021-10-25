@@ -58,6 +58,15 @@ socket.on('joinGame', (info) => {
 
 socket.on('updateWaitingList', (playerNames) => {
 	 updatePlayerList(playerNames);
+
+questionButton.addEventListener('click', () => {
+    socket.emit('questionIsClicked');
+});
+
+
+socket.on('restart_game', (data) =>{
+    alert(data)
+    restartGame();
 });
 
 socket.on('startGame', () => {
@@ -82,4 +91,9 @@ function goCrazy(offLeft, offTop) {
     crazyButton.style.top = top + 'px';
     crazyButton.style.left = left + 'px';
     crazyButton.style.animation = "none";
+}
+
+function restartGame() {
+    startButton.style.display = "block";
+    crazyButton.style.display = "none";
 }

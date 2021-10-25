@@ -12,6 +12,11 @@ crazyButton.addEventListener('click', () => {
     });
 })
 
+questionButton.addEventListener('click', () => {
+    socket.emit('questionIsClicked');
+});
+
+
 socket.on('restart_game', (data) =>{
     alert(data)
     restartGame();

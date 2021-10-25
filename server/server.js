@@ -11,6 +11,19 @@ let io = socketIO(server);
 
 app.use(express.static(publicPath));
 
+var mysql = require('mysql2');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "trivial_admin",
+  password: "password",
+  database: "jeopardy"
+});
+
+con.connect(function(err) {
+    if (err) throw err;
+});
+
 server.listen(port, ()=> {
     console.log(`Server is up on port ${port}.`)
 });
@@ -32,6 +45,16 @@ io.on('connection', (socket) => {
     });
     socket.on('chat message', (msg) => {
         io.emit('chat message', msg);
+    });
+    socket.on('questionIsClicked', (data) => {
+        con.connect(function(err) {
+            if (err) throw err;
+            con.query("SELECT * FROM questions", function (err, result, fields) {
+              if (err) throw err;
+              console.log(result);
+            });
+          });
+        io.emit('questionIsClicked', data);
     });
 
 });

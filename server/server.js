@@ -17,8 +17,10 @@ server.listen(port, ()=> {
 
 io.on('connection', (socket) => {
 	console.log('A user just connected.');
+    console.log(socket.id);
     socket.on('disconnect', () => {
         console.log('A user has disconnected.');
+        messageClients();
     })
     socket.on('startGame', () => {
         io.emit('startGame');
@@ -28,6 +30,11 @@ io.on('connection', (socket) => {
     });
     
 });
+
+function messageClients() {
+    io.emit("restart_game", "A player has left the game. Restarting game!");
+}
+
 
 
 

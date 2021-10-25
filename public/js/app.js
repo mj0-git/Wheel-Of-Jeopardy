@@ -12,6 +12,11 @@ crazyButton.addEventListener('click', () => {
     });
 })
 
+socket.on('restart_game', (data) =>{
+    alert(data)
+    restartGame();
+});
+
 socket.on('startGame', () => {
     hideStartButton();
 });
@@ -33,4 +38,9 @@ function goCrazy(offLeft, offTop) {
     crazyButton.style.top = top + 'px';
     crazyButton.style.left = left + 'px';
     crazyButton.style.animation = "none";
+}
+
+function restartGame() {
+    startButton.style.display = "block";
+    crazyButton.style.display = "none";
 }

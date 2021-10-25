@@ -16,7 +16,7 @@ server.listen(port, ()=> {
 });
 
 io.on('connection', (socket) => {
-	console.log('A user just connected.');
+    console.log('A user just connected.');
     socket.on('disconnect', () => {
         console.log('A user has disconnected.');
     })
@@ -26,7 +26,13 @@ io.on('connection', (socket) => {
     socket.on('crazyIsClicked', (data) => {
         io.emit('crazyIsClicked', data);
     });
-    
+    socket.on('chat message', (msg) => {
+        console.log('message: ' + msg);
+    });
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+    });
+
 });
 
 

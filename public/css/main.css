@@ -104,3 +104,6 @@ body, .jumbotron {
     right: 20px;
     bottom: 20px;
 }
+#playerListDiv {
+	display: none;
+}	

@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
 		sessionData["waitingPlayers"].push(socket.id);
 		socket.join('waitingroom');
 		// make a game instance if there are more than three players
-		if (sessionData["waitingPlayers"].length >= 3) {
+		if (sessionData["waitingPlayers"].length >= 30) {
 			createGameInstance();
 		}
 		

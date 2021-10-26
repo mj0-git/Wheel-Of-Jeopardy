@@ -101,4 +101,5 @@ function restartGame() {
     document.getElementById('messages').innerHTML = "";
     playerListHeading.innerText = "Connected Players";
     playerListDiv.style.display = 'block';
+    document.getElementById('players').innerHTML = "";
 }

@@ -2,29 +2,26 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
-const uuidv4 = require("uuid/v4")
-
-
+const uuid = require('uuid');
 const publicPath = path.join(__dirname, '/../public');
 const port = process.env.PORT || 3000;
 let app = express();
 let server = http.createServer(app);
 let io = socketIO(server);
+let Category = require('../models/category.js');
 
 app.use(express.static(publicPath));
 
-var mysql = require('mysql2');
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "trivial_admin",
-  password: "password",
-  database: "jeopardy"
-});
 
-con.connect(function(err) {
-    if (err) throw err;
-});
+let mysql      = require('mysql2');
+let connectionDetails = {
+    host: "localhost",
+    user: "root2",
+    password: "object00",
+    database: "jeopardy"
+};
+
 
 server.listen(port, ()=> {
     console.log(`Server is up on port ${port}.`)
@@ -35,13 +32,32 @@ var sessionData = {
 	"players": [],
 	"waitingPlayers": [],
 };
+var wheel = [];
+
+//loadWheel();
+
+function loadWheel(){
+	let con = mysql.createConnection(connectionDetails);
+	con.query('SELECT * FROM questions', function (error, results, fields) {
+		if (error) throw error;
+		var title = results[0].question;
+		var choices = [results[0].answer_a, results[0].answer_b, results[0].answer_c, results[0].answer_d];
+		var answer = results[0].correct_answer;
+		var category = new Category("Games", 5);
+		category.addQuestion(title, choices, answer);
+		wheel.push(category);
+		console.log(results);
+	});
+	con.end();
+}
 
 //select first three players and make a game session for them
 function createGameInstance(){
-	let gameId = uuidv4();
+	console.log("new instance");
+	let gameId = uuid.v4();
 	sessionData[gameId] = []
+	console.log("New Game Instance");
 	for (var i = 0; i < 3; i++) {
-		
 		var player = sessionData["waitingPlayers"].shift();
 		sessionData["players"][player]["gameId"] = gameId;
 		sessionData[gameId].push(player);
@@ -63,22 +79,15 @@ io.on('connection', (socket) => {
 		socket.leave('waitingroom');
 		socket.join(info.gameId);		
 	});	
-
-    socket.on('startGame', () => {
-        io.emit('startGame');
-    })
-
-    socket.on('crazyIsClicked', (data) => {
-        io.emit('crazyIsClicked', data);
-    });
     
 	socket.on('gotName', (data) => {
 		sessionData["players"][socket.id]["name"] = data;
 		sessionData["waitingPlayers"].push(socket.id);
 		socket.join('waitingroom');
 		// make a game instance if there are more than three players
-		if (sessionData["waitingPlayers"].length >= 30) {
+		if (sessionData["waitingPlayers"].length >= 3) {
 			createGameInstance();
+			//loadQuestions(createGameInstance);
 		}
 		
 		// make list of player names who are in waiting room
@@ -113,22 +122,6 @@ io.on('connection', (socket) => {
 		socket.leave(gameId);
 		io.to(socket.id).emit("gotName", sessionData["players"][socket.id]["name"]);
 	}
-    });
-
-    socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
-		io.emit('chat message', msg);
-    });
-
-    socket.on('questionIsClicked', (data) => {
-        con.connect(function(err) {
-            if (err) throw err;
-            con.query("SELECT * FROM questions", function (err, result, fields) {
-              if (err) throw err;
-              console.log(result);
-            });
-          });
-        io.emit('questionIsClicked', data);
     });
 
 });

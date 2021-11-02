@@ -5,115 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Title -->
-    <title>Button</title>
+    <title>Wheel Of Jeporady</title>
     <!-- Links -->
     <link rel="shortcut icon" href="img/favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
-    <style>
-        body {
-            margin: 0;
-            padding-bottom: 3rem;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        #form {
-            background: rgba(0, 0, 0, 0.15);
-            padding: 0.25rem;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            height: 3rem;
-            box-sizing: border-box;
-            backdrop-filter: blur(10px);
-        }
-
-        #input {
-            border: none;
-            padding: 0 1rem;
-            flex-grow: 1;
-            border-radius: 2rem;
-            margin: 0.25rem;
-        }
-
-            #input:focus {
-                outline: none;
-            }
-
-        #form > button {
-            background: #333;
-            border: none;
-            padding: 0 1rem;
-            margin: 0.25rem;
-            border-radius: 3px;
-            outline: none;
-            color: #fff;
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-            #messages > li {
-                padding: 0.5rem 1rem;
-            }
-
-                #messages > li:nth-child(odd) {
-                    background: #efefef;
-                }
-    </style>
 </head>
 <body>
-<section>
-    <ul id="messages"></ul>    
-    <button type="button" id="crazyButton" class="btn-crazy btn btn-lg btn-danger">
-    </button>
-    <button type="button" id="startButton" class="btn-start btn btn-lg">Start
-    </button>
-	<form id="nameForm" action="">
-      Name: <input type="text" id="nameSubmit"><br>
-      <input type="submit" value="Submit">
-    </form>
-	<div id="playerListDiv">	
-		<h4 id="playerListHeading">Current Players</h4>
-		<ul id="players">
-		</ul>
-	</div>
-    <button type="button" id="questionButton" class="home-btn">Test DB Query
-    </button>
-    <form id="form" action="">      
-	    <input id="input" autocomplete="off" /><button id="nameSendButton">Send</button>    
-    </form>
-</section>
+    <table id="login">
+        <tr class="row_big colorPrimary">
+            <td colspan="2">
+                <div class="text-title-big">Wheel Of Jeporady</div>
+            </td>
+        </tr>
+        <tr class="row_big colorPrimary">
+            <td colspan="2">
+                <div class="text-title-small">Enter Name:</div>
+                <form id="nameForm" action="">
+                    <input class="colorSecondary" type="text" id="nameSubmit"><br>
+                    <input type="submit" value="Submit">
+                  </form>
+            </td>
+        </tr>
+    </table>
+    <table id="before_game" style="display: none">
+        <tr class="row_small colorPrimary">
+          <td colspan="2">
+                    <div class="text-title-small">
+                        <div id="playerListDiv">	
+                            <h4 id="playerListHeading">Current Players</h4>
+                            <ul id="players">
+                            </ul>
+                        </div>
+                    </div>
+             </td>
+        </tr>
+    </table>
     <!-- Socket.IO Javacript -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/app.js" charset="utf-8"></script>
-    <script>
-        var messages = document.getElementById('messages');
-        var form = document.getElementById('form');
-        var input = document.getElementById('input');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (input.value) {
-                socket.emit('chat message', input.value);
-                input.value = '';
-            }
-        });
-
-        socket.on('chat message', function (msg) {
-            var item = document.createElement('li');
-            item.textContent = msg;
-            messages.appendChild(item);
-	   // window.scrollTo(0, document.body.scrollHeight);
-        });
-    </script>
-
 </body>
 </html>

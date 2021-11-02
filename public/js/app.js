@@ -1,23 +1,11 @@
 let socket = io();
-let crazyButton = document.getElementById('crazyButton');
-let startButton = document.getElementById('startButton');
 let nameForm = document.getElementById('nameForm');
 let nameInput = document.getElementById('nameSubmit');
 let playerList = document.getElementById('players');
 let playerListDiv = document.getElementById('playerListDiv');
 let playerListHeading = document.getElementById('playerListHeading');
-
-startButton.addEventListener('click', () => {
-    socket.emit('startGame');
-});
-
-crazyButton.addEventListener('click', () => {
-    socket.emit('crazyIsClicked', {
-        offsetLeft: Math.random() * ((window.innerWidth - crazyButton.clientWidth) - 100),
-        offsetTop: Math.random() * ((window.innerHeight - crazyButton.clientHeight) - 50)
-    });
-})
-
+let login = document.getElementById('login');
+let before_game = document.getElementById('before_game');
 
 nameForm.addEventListener('submit', sendGotNameMessage);
 
@@ -27,6 +15,8 @@ function sendGotNameMessage(e) {
 	socket.emit('gotName', nameInput.value);
 	nameForm.style.display = 'none';
 	nameInput.value = "";
+    login.style.display = 'none';
+    before_game.style.display = 'table'
 }
 
 // update list on client with player names who are waiting
@@ -53,52 +43,19 @@ socket.on('connect', () => {
 socket.on('joinGame', (info) => {
 	playerListHeading.innerText = "Your opponents are: "+ info.names;
 	playerListDiv.style.display = 'none';
-
 });
 
 socket.on('updateWaitingList', (playerNames) => {
 	 updatePlayerList(playerNames);
 });
 
-questionButton.addEventListener('click', () => {
-    socket.emit('questionIsClicked');
-});
-
-
 socket.on('restart_game', (data) =>{
     alert(data)
-
     restartGame();
 });
 
-socket.on('startGame', () => {
-    hideStartButton();
-});
-
-socket.on('crazyIsClicked', (data) => {
-    goCrazy(data.offsetLeft, data.offsetTop);
-});
-
-function hideStartButton() {
-    startButton.style.display = "none";
-    crazyButton.style.display = "block";
-}
-
-function goCrazy(offLeft, offTop) {
-    let top, left;
-
-    left = offLeft;
-    top = offTop;
-
-    crazyButton.style.top = top + 'px';
-    crazyButton.style.left = left + 'px';
-    crazyButton.style.animation = "none";
-}
 
 function restartGame() {
-    startButton.style.display = "block";
-    crazyButton.style.display = "none";
-    document.getElementById('messages').innerHTML = "";
     playerListHeading.innerText = "Connected Players";
     playerListDiv.style.display = 'block';
     document.getElementById('players').innerHTML = "";

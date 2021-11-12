@@ -74,6 +74,7 @@ function createGameInstance(){
 	let gamePlayers = sessionData[gameId].map(tempId => {return sessionData["players"][tempId]["name"]});
 	sessionData[gameId].forEach(function (id) {
 		io.to(id).emit('joinGame', {"gameId":gameId, "names": gamePlayers});
+		io.emit('renderWheel', { "wheel":wheel});
 	})
 }
 
@@ -81,6 +82,11 @@ io.on('connection', (socket) => {
 	console.log('A user just connected with ID ' + socket.id);
     sessionData["players"][socket.id] = {"socket": socket, "name": "New Player", "gameId": null, "score": 0};
 
+	
+	//Need to configure for game session? Set to all current and new right now 
+	socket.on('spinIsClicked', (data) => {
+        io.emit('spinIsClicked', data);
+    });
 	
 	socket.on('joinGame', (info) => {
 		socket.leave('waitingroom');
@@ -94,7 +100,6 @@ io.on('connection', (socket) => {
 		// make a game instance if there are more than three players
 		if (sessionData["waitingPlayers"].length >= 3) {
 			createGameInstance();
-			//loadQuestions(createGameInstance);
 		}
 		
 		// make list of player names who are in waiting room

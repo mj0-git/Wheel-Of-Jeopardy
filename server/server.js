@@ -17,7 +17,7 @@ app.use(express.static(publicPath));
 let mysql      = require('mysql2');
 let connectionDetails = {
     host: "localhost",
-    user: "root2",
+    user: "root",
     password: "object00",
     database: "jeopardy"
 };
@@ -34,19 +34,26 @@ var sessionData = {
 };
 var wheel = [];
 
-//loadWheel();
+loadWheel();
 
 function loadWheel(){
 	let con = mysql.createConnection(connectionDetails);
-	con.query('SELECT * FROM questions', function (error, results, fields) {
+	con.query('SELECT * FROM questions ORDER BY category', function (error, results, fields) {
 		if (error) throw error;
-		var title = results[0].question;
-		var choices = [results[0].answer_a, results[0].answer_b, results[0].answer_c, results[0].answer_d];
-		var answer = results[0].correct_answer;
-		var category = new Category("Games", 5);
-		category.addQuestion(title, choices, answer);
+		var category = new Category(results[0].category, 5);
+		for (i in results){
+			if (results[i].category != category.name){
+				wheel.push(category);
+				category = new Category(results[i].category, 5);
+			}
+			var title = results[i].title;
+			var choices = [results[i].answer_a, results[i].answer_b, results[i].answer_c, results[i].answer_d];
+			var answer = results[i].correct_answer
+			var points = results[i].points
+			category.addQuestion(title, choices, answer, points);
+		} 
 		wheel.push(category);
-		console.log(results);
+		//console.log(wheel);
 	});
 	con.end();
 }
@@ -129,7 +136,4 @@ io.on('connection', (socket) => {
 function messageClients() {
     io.emit("restart_game", "A player has left the game. Restarting game!");
 }
-
-
-
 

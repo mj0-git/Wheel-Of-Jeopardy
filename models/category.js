@@ -6,16 +6,20 @@ class Category {
         this.questions = [];
     }
     
-    addQuestion(title, choices, answer){
-        var question = new Question(title, choices, answer);
+    addQuestion(title, choices, answer, points){
+        var question = new Question(title, choices, answer, points);
         this.questions.push(question);
+    }
+    getQuestion(index){
+        return this.questions[index];
     }
 }
 
 class Question {
 
-    constructor(title, choices, answer) {
+    constructor(title, choices, answer, points) {
         this.title = title;
+        this.points = points; 
         this.choices = choices; 
         this.answer = answer; 
     }

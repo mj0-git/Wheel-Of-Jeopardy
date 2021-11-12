@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS `questions`;
 CREATE TABLE `questions` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `question` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `answer_a` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `answer_b` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `answer_c` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,

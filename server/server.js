@@ -64,7 +64,7 @@ function createGameInstance(){
 	let gameId = uuid.v4();
 	sessionData[gameId] = []
 	console.log("New Game Instance");
-	for (var i = 0; i < 3; i++) {
+	for (var i = 0; i < 2; i++) {
 		var player = sessionData["waitingPlayers"].shift();
 		sessionData["players"][player]["gameId"] = gameId;
 		sessionData[gameId].push(player);
@@ -98,7 +98,7 @@ io.on('connection', (socket) => {
 		sessionData["waitingPlayers"].push(socket.id);
 		socket.join('waitingroom');
 		// make a game instance if there are more than three players
-		if (sessionData["waitingPlayers"].length >= 3) {
+		if (sessionData["waitingPlayers"].length >= 2) {
 			createGameInstance();
 		}
 		

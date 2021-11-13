@@ -46,11 +46,21 @@
     </table>
     <table id="start_game" style="display: none">
         <tr>
-            <td width="438" height="582" class="the_wheel" align="center" valign="center">
+            <td width="438" height="582" align="center" valign="center">
                 <div class="question_display">
                     <label id="question"></label>
+                    <table style="width:100%">
+                        <tr>
+                          <th id="choice-one"></th>
+                          <th id="choice-two"></th>
+                        </tr>
+                        <tr>
+                            <th id="choice-three"></th>
+                            <th id="choice-four"></th>
+                        </tr>
+                      </table>
                 </div>
-                <canvas id="canvas" width="434" height="434">
+                <canvas class="the_wheel"  id="canvas" width="434" height="434">
                     <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
                 </canvas>
                 <div class="spin_controls">

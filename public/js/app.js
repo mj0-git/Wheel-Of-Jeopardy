@@ -42,9 +42,10 @@ socket.on('connect', () => {
 // update message to show that players have joined a game session
 socket.on('joinGame', (info) => {
 	before_game.style.display = 'none';
-    start_game.style.display = 'table'
+    start_game.style.display = 'table';
 	//playerListHeading.innerText = "Your opponents are: "+ info.names;
 	//playerListDiv.style.display = 'none';
+	resetWheel();
 });
 
 socket.on('renderWheel', (info) => {
@@ -53,7 +54,6 @@ socket.on('renderWheel', (info) => {
 		theWheel['segments'][i]['text'] = theWheelData[i].name;
 		theWheel['segments'][i]['questions'] = theWheelData[i].questions;
 	}
-	resetWheel();
 });
 
 socket.on('updateWaitingList', (playerNames) => {
@@ -74,11 +74,15 @@ function restartGame() {
 }
 
 spin_button.addEventListener('click', () => {
-    socket.emit('spinIsClicked', {});
+    socket.emit('spinIsClicked', {
+		stopAt : Math.floor((Math.random() * 359))
+
+	});
 })
 
 socket.on('spinIsClicked', (data) => {
-    startSpin();
+	stopAt = data.stopAt;
+    startSpin(stopAt);
 });
 
 
@@ -112,7 +116,7 @@ let theWheel = new Winwheel({
 // -------------------------------------------------------
 // Click handler for spin button.
 // -------------------------------------------------------
-function startSpin()
+function startSpin(stopAt)
 {
 	// Ensure that spinning can't be clicked again while already running.
 	if (wheelSpinning == false) {
@@ -120,6 +124,8 @@ function startSpin()
 		// Disable the spin button so can't click again while wheel is spinning.
 		document.getElementById('spin_button').src       = "images/spin_off.png";
 		document.getElementById('spin_button').className = "";
+
+		theWheel.animation.stopAngle = stopAt;
 
 		// Begin the spin animation by calling startAnimation on the wheel object.
 		theWheel.startAnimation();
@@ -134,7 +140,7 @@ function resetWheel()
 {
 	theWheel.stopAnimation(false);  // Stop the animation, false as param so does not call callback function.
 	theWheel.rotationAngle = 0;     // Re-set the wheel angle to 0 degrees.
-	theWheel.draw();                // Call draw to render changes to the wheel.
+	//theWheel.draw();                // Call draw to render changes to the wheel.
 	document.getElementById('spin_button').src = "images/spin_on.png";
 	document.getElementById('spin_button').className = "clickable";
 	wheelSpinning = false;          // Reset to false to power buttons and spin can be clicked again.
@@ -144,6 +150,11 @@ function resetWheel()
 function getQuestions(indicatedSegment)
 {	
 	document.getElementById('question').innerHTML = indicatedSegment['questions'][0].title;
+	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][0].choices[0];
+	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][0].choices[1];
+	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][0].choices[2];
+	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][0].choices[3];
+
 	console.log(indicatedSegment['questions']);
 	
 	resetWheel();

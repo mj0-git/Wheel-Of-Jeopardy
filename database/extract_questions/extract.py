@@ -2,7 +2,7 @@ import csv
 
 categories = ["geography", "animals", "movies", "music", "science-technology", "television"]
 id = 1 
-limit = 5
+limit = 20
 for category in categories:
     openFile = open('csv/' + category + '.csv', 'r')
     csvFile = csv.reader(openFile)
@@ -21,11 +21,10 @@ for category in categories:
         row_id = id
         values.insert(0, str(row_id))
         print(insert +"(" + ", ".join(values) + ");")
+        id += 1
         if (id % limit) == 0:
-            id += 1
             points = 10 
             break
         else: 
-            id += 1
             points += 10 
     openFile.close()

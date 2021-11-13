@@ -101,7 +101,7 @@ let theWheel = new Winwheel({
 	   {'fillStyle' : '#89f26e', 'text' : '', 'questions':''},
 	   {'fillStyle' : '#7de6ef', 'text' : '', 'questions':''},
 	   {'fillStyle' : '#e7706f', 'text' : '', 'questions':''},
-	   {'fillStyle' : '#eae56f', 'text' : '', 'questions':''},
+	   {'fillStyle' : '#c133ff', 'text' : '', 'questions':''},
 
 	],
 	'animation' :           // Specify the animation to use.

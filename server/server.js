@@ -17,8 +17,8 @@ app.use(express.static(publicPath));
 let mysql      = require('mysql2');
 let connectionDetails = {
     host: "localhost",
-    user: "root",
-    password: "object00",
+    user: "trivial_admin",
+    password: "password",
     database: "jeopardy"
 };
 

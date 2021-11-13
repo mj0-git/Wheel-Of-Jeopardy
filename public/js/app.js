@@ -45,7 +45,6 @@ socket.on('joinGame', (info) => {
     start_game.style.display = 'table';
 	//playerListHeading.innerText = "Your opponents are: "+ info.names;
 	//playerListDiv.style.display = 'none';
-	resetWheel();
 });
 
 socket.on('renderWheel', (info) => {
@@ -54,6 +53,8 @@ socket.on('renderWheel', (info) => {
 		theWheel['segments'][i]['text'] = theWheelData[i].name;
 		theWheel['segments'][i]['questions'] = theWheelData[i].questions;
 	}
+	theWheel.draw(); 
+	resetWheel();
 });
 
 socket.on('updateWaitingList', (playerNames) => {

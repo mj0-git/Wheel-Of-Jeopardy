@@ -13,10 +13,11 @@
     <link rel="stylesheet" href="css/main.css">
     <script type="text/javascript" src="js/Winwheel.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <link href="http://db.onlinewebfonts.com/c/b1b36ca25fec551de1c3dc9c28e97b1a?family=SF+Fortune+Wheel" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <audio autoplay loop>
-        Source src= "/audio/themeSong.mp3";
+    <audio id="audio" autoplay loop>
+        <source src= "/audio/themeSong.mp3">
     </audio>
     <table id="login">
         <tr class="row_big logo">
@@ -47,6 +48,20 @@
             </td>
         </tr>
     </table>
+
+    <div class="scoreboardData" id="scoreboard" style="display: none">
+        <div class="timer">Time</div>
+        <div class="scoreboardName scoreboardNameOne"> Player One</div>
+        <div class="scoreboardName scoreboardNameTwo">Player Two</div>
+        <div class="scoreboardName scoreboardNameThree">Player Three</div>
+        <div class="remainingQuestions">Questions Remaining</div>
+        <div class="timeLeft" id="app"></div>
+        <div class="scorboardScore">0</div>
+        <div class="scorboardScore">0</div>
+        <div class="scorboardScore">0</div>
+        <div class="remainLength">0</div>
+    </div>
+
     <table id="start_game" style="display: none">
         <tr>
             <td width="438" height="582" align="center" valign="center">

@@ -15,7 +15,10 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
 </head>
 <body>
-    <table id="login" >
+    <audio autoplay loop>
+        Source src= "/audio/themeSong.mp3";
+    </audio>
+    <table id="login">
         <tr class="row_big colorPrimary">
             <td colspan="2">
                 <div class="text-title-big">Wheel Of Jeporady</div>
@@ -27,21 +30,21 @@
                 <form id="nameForm" action="">
                     <input class="colorSecondary" type="text" id="nameSubmit"><br>
                     <input type="submit" value="Submit">
-                  </form>
+                </form>
             </td>
         </tr>
     </table>
     <table id="before_game" style="display: none">
         <tr class="row_small colorPrimary">
-          <td colspan="2">
-                    <div class="text-title-small">
-                        <div id="playerListDiv">	
-                            <h4 id="playerListHeading">Current Players</h4>
-                            <ul id="players">
-                            </ul>
-                        </div>
+            <td colspan="2">
+                <div class="text-title-small">
+                    <div id="playerListDiv">
+                        <h4 id="playerListHeading">Current Players</h4>
+                        <ul id="players">
+                        </ul>
                     </div>
-             </td>
+                </div>
+            </td>
         </tr>
     </table>
     <table id="start_game" style="display: none">
@@ -51,16 +54,16 @@
                     <label id="question"></label>
                     <table style="width:100%">
                         <tr>
-                          <th id="choice-one"></th>
-                          <th id="choice-two"></th>
+                            <th id="choice-one"></th>
+                            <th id="choice-two"></th>
                         </tr>
                         <tr>
                             <th id="choice-three"></th>
                             <th id="choice-four"></th>
                         </tr>
-                      </table>
+                    </table>
                 </div>
-                <canvas class="the_wheel"  id="canvas" width="434" height="434">
+                <canvas class="the_wheel" id="canvas" width="434" height="434">
                     <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
                 </canvas>
                 <div class="spin_controls">

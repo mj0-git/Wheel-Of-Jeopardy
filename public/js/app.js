@@ -88,7 +88,6 @@ socket.on('spinIsClicked', (data) => {
 });
 
 
-
 // Vars used by the code in this page to do power controls.
 let wheelPower    = 1;
 let wheelSpinning = false;

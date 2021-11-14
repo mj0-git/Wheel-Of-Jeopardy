@@ -1,109 +1,215 @@
+@import url('https://fonts.googleapis.com/css?family=Anton');
+
+/* COLOURS
+
+  @primary: #f5d6ba
+  @primary-dark: #f49d6e
+  @secondary: #2c2c54
+  @wrong: #c36161
+  @correct: #b1c191
+*/
+
+body {
+  text-align: center;
+}
+
+/* Sets the background image for the wheel */
+.the_wheel
+{
+    background-image: url(../images/wheel_back.png);
+    background-position: center;
+    background-repeat: none;
+}
+
+* {
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  border-collapse: collapse;
+  font-family: 'Anton', sans-serif;
+  color: white;
+}
+
+.tile {
+    border: 10px solid #2c2c54;
+    background-color: #f5d6ba;
+    color: #2c2c54;
+}
+
+.tile * {
+  background-color: #f5d6ba;
+  color: #2c2c54;
+}
+
+.wrong, .wrong * {
+  background-color: #c36161 !important;
+}
+
+.correct, .correct * {
+  background-color: #b1c191 !important;
+}
+
+.locked, .locked * {
+  background-color: #f49d6e !important;
+}
+
+.colorPrimary, .colorPrimary * {
+  background-color: #f5d6ba;
+  color: #2c2c54;
+}
+
+.colorPrimaryDark, .colorPrimaryDark * {
+  background-color: #f49d6e;
+  color: #2c2c54;
+}
+
+.colorSecondary, .colorSecondary * {
+  background-color: #2c2c54;
+  color: #f5d6ba;
+}
+
 html, body {
-    font-family: "Press Start 2P";
-}
-body, .jumbotron {
-    padding: 30px;
-    background-color: rgb(255, 255, 255);
-}
-.text-giant {
-    font-size: 40px;
-}
-.text-right {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    width: 550px;
-    pointer-events: none;
-}
-.text-left {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    width: 550px;
-    pointer-events: none;
-}
-.btn-crazy {
-    display: none;
-    position: absolute;
-    top: 43%;
-    left: 46%;
-    transition: 0.1s ease all;
-
-    width: 100px;
-    height: 100px;
-}
-.btn-start {
-    display: block;
-    position: absolute;
-    top: 40%;
-    left: 45%;
-    transition: 0.1s ease all;
-    background: white;
-    color: black;
-    border: 3px solid black;
-
-    width: 150px;
-    height: 150px;
-
-}
-.time {
-    font-size: 60px;
-    position: absolute;
-    top: 30px;
-    left: 46%;
-    pointer-events: none;
-}
-.score {
-    font-size: 60px;
-    pointer-events: none;
-    border-bottom: 2px solid black;
-    padding-left: 10px;
-    padding-top: 10px;
-    padding-right: 10px;
-}
-.high-score {
-    font-size: 60px;
-    position: absolute;
-    bottom: 30px;
-    left: 2%;
-    pointer-events: none;
-    border-top: 2px solid black;
-    border-right: 2px solid black;
-    padding-left: 10px;
-    padding-top: 10px;
-    padding-right: 10px;
-    -webkit-text-stroke: 2px rgb(0, 0, 0);
-    -webkit-text-fill-color: rgb(255, 255, 255);
-}
-.my-time-text {
-    font-size: 30px;
-    pointer-events: none;
-    -webkit-text-stroke: 1px rgb(0, 0, 0);
-    -webkit-text-fill-color: rgb(255, 255, 255);
-    animation: shake .2s infinite;
-}
-@keyframes shake {
-10%, 90% {
-    transform: translate3d(-1px, 0, 0);
+  background-color: #2c2c54;
+  height: 100%;
 }
 
-20%, 80% {
-    transform: translate3d(1px, 1px, 0);
+table {
+  text-align: center;
+  text-decoration: none;
+  margin: 0;
+  font-family: Impact, Charcoal, sans-serif;
+  width: 100%;
+  height: 100%;
+  color: #2c2c54;
 }
 
-30%, 50%, 70% {
-    transform: translate3d(-3px, -1px, 0);
+td {
+  width: 50%;
 }
 
-40%, 60% {
-    transform: translate3d(3px, 0, 0);
+.row_small {
+  height: 7.5%
 }
+
+.row_big {
+  height: 30%;
 }
-.home-btn {
-    position: fixed;
-    right: 20px;
-    bottom: 50px;
+
+.row_very_big {
+  height: 70%;
 }
-#playerListDiv {
-	display: none;
-}	
+
+.answerButton {
+  font-size: 30px;
+  width: 100%;
+  float: left;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.tile:hover {
+  filter: brightness(90%);
+}
+
+.tile:active {
+  filter: brightness(80%);
+}
+
+.text-title-big {
+  font-size: 100px;
+}
+
+.text-title-small {
+  font-size: 40px;
+}
+
+.text-counter {
+  font-size: 45px;
+}
+
+.text-large {
+  font-size: 35px;
+}
+
+.text-small {
+  font-size: 25px;
+}
+
+.counter {
+  font-size: 25px;
+  width: 100%;
+  float: left;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.button {
+  font-size: 20px;
+  height: 100%;
+  width: 100%;
+  padding: 0 2em;
+}
+
+.button:hover {
+  filter: brightness(90%);
+}
+
+.button:active {
+  filter: brightness(80%);
+}
+
+.loginButton {
+  font-size: 20px;
+  padding: 0 2em;
+}
+
+.loginButton:hover {
+  filter: brightness(90%);
+}
+
+.loginButton:active {
+  filter: brightness(80%);
+}
+
+.teamButton {
+  text-align: center;
+  font-size: 40px;
+  margin: 0 0.5em;
+  width: 20%;
+  color: #f5d6ba;
+}
+
+.teamButton:hover {
+  filter: brightness(90%);
+}
+
+.teamButton:active {
+  filter: brightness(80%);
+}
+
+input[type=text], select {
+  color: #f5d6ba;
+  width: 300px;
+  padding: 20px 40px;
+  margin: 8px 0;
+  display: inline-block;
+  border: none;
+  box-sizing: content-box;
+  font-size: 30px;
+}
+
+.scoreboardData {
+  padding: 15px 0;
+  border: 30px solid #2c2c54;
+  border-bottom: 5px  solid #2c2c54;
+  border-top: none;
+}
+
+#summary {
+  max-width: 65em;
+  margin: 0 auto;
+}

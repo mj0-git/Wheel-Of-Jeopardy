@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Anton');
+@import url('http://db.onlinewebfonts.com/c/b1b36ca25fec551de1c3dc9c28e97b1a?family=SF+Fortune+Wheel');
+@import url('https://static.parade.com/wp-content/uploads/2020/12/jeopardy-board.jpeg');
+@import url('https://media.giphy.com/media/fs03kG7ckPyqwI0bbl/giphy.gif');
 
 /* COLOURS
 
@@ -19,6 +22,18 @@ body {
     background-image: url(../images/wheel_back.png);
     background-position: center;
     background-repeat: none;
+}
+
+.font-face {
+    font-family: 'SF Fortune Wheel';
+    source src: url('http://db.onlinewebfonts.com/t/b1b36ca25fec551de1c3dc9c28e97b1a.eot');
+    -webkit-text-stroke: 4px black;
+}
+
+.logo {
+    background-image: url('https://media.giphy.com/media/fs03kG7ckPyqwI0bbl/giphy.gif'), url('https://static.parade.com/wp-content/uploads/2020/12/jeopardy-board.jpeg');
+    background-size: cover, cover;
+    width: 100%, 100%;
 }
 
 * {

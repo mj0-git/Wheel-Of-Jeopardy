@@ -67,9 +67,15 @@
                     <img id="spin_button" src="/images/spin_off.png" alt="Spin" />
                     <br /><br />
                 </div>
+                <div id="Chatbox"></div>
+                <form name="message" action="">
+                    <input name="usermsg" type="text" id="usermsg" />
+                    <input name="submitmsg" type="submit" id="submitmsg" value="Send" />
+                </form>
             </td>
         </tr>
     </table>
+
     <!-- Socket.IO Javacript -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/app.js" charset="utf-8"></script>

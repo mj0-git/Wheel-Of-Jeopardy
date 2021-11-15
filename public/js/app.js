@@ -6,6 +6,7 @@ let playerListDiv = document.getElementById('playerListDiv');
 let playerListHeading = document.getElementById('playerListHeading');
 let login = document.getElementById('login');
 let before_game = document.getElementById('before_game');
+let gameLength = document.getElementById('gameLength');
 
 nameForm.addEventListener('submit', sendGotNameMessage);
 
@@ -42,6 +43,7 @@ socket.on('setGameLength', () => {
 	//TODO display text field to get num questions
 	//event listener on text field should emit game length
 	//to setServerGameLength, for example:
+	gameLength.style.display = 'flex';
 	socket.emit("setServerGameLength", {length: 10});
 });
 

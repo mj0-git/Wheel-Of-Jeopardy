@@ -346,3 +346,31 @@ input[type=text], select {
     justify-content: center;
     font-size: 24px;
 }
+
+.bg-modal {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    width: 500px;
+    height: 300px;
+    background-color: white;
+    border-radius: 4px;
+    text-align: center;
+    padding: 30px;
+    justify-content: space-around;
+}
+
+.lengthButton {
+    font-size: 20px;
+    height: 100%;
+    width: 100%;
+    padding: 0 2em;
+}

@@ -38,12 +38,17 @@ socket.on('connect', () => {
 	playerListHeading.innerText = "Connected Players";
 });
 
+socket.on('setGameLength', () => {
+	//TODO display text field to get num questions
+	//event listener on text field should emit game length
+	//to setServerGameLength, for example:
+	socket.emit("setServerGameLength", {length: 10});
+});
 
 // update message to show that players have joined a game session
 socket.on('joinGame', (info) => {
 	before_game.style.display = 'none';
     start_game.style.display = 'table';
-	//playerListHeading.innerText = "Your opponents are: "+ info.names;
 	//playerListDiv.style.display = 'none';
 });
 
@@ -71,7 +76,6 @@ function restartGame() {
     playerListHeading.innerText = "Connected Players";
     playerListDiv.style.display = 'block';
     document.getElementById('players').innerHTML = "";
-	
 }
 
 spin_button.addEventListener('click', () => {

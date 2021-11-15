@@ -5,6 +5,8 @@ const socketIO = require('socket.io');
 const uuid = require('uuid');
 const publicPath = path.join(__dirname, '/../public');
 const port = process.env.PORT || 3000;
+const Player = require('./player.js');
+const Game = require('./game.js');
 let app = express();
 let server = http.createServer(app);
 let io = socketIO(server);
@@ -17,7 +19,7 @@ app.use(express.static(publicPath));
 let mysql      = require('mysql2');
 let connectionDetails = {
     host: "localhost",
-    user: "root",
+    user: "test",
     password: "object00",
     database: "jeopardy"
 };
@@ -28,13 +30,112 @@ server.listen(port, ()=> {
 });
 
 //dictionary to store player data and game data
-var sessionData = {
-	"players": [],
-	"waitingPlayers": [],
-};
+var playerData = {};
+var waitingRoom =  [];
+var gameData = {};
 var wheel = [];
 
 loadWheel();
+
+io.on('connection', (socket) => {
+	console.log('A user just connected with ID ' + socket.id);
+    socket.join(socket.id);
+	player = new Player(socket.id, socket);
+	playerData[socket.id] = player;
+	//sessionData["players"][socket.id] = {"socket": socket, "name": "New Player", "gameId": null, "score": 0};
+
+	
+	//Need to configure for game session? Set to all current and new right now 
+	socket.on('spinIsClicked', (data) => {
+		io.emit('spinIsClicked', data);
+    });
+  
+	socket.on('setServerGameLength', (data) => {
+		console.log(data);
+		//save game length in Game instance variable
+		var gameId = playerData[socket.id].getGameId();
+		gameData[gameId].setGameLength(data.length);
+
+		gameData[gameId].startGame();
+		//tell all players in game session to show the wheel
+		io.to(gameId).emit('renderWheel', { "wheel":wheel});
+
+	});
+ 
+	socket.on('gotName', (data) => {
+		console.log("Player " + socket.id + " entered the name " + data);
+		playerData[socket.id].setName(data);
+		console.log("MY PLAYER" + playerData[socket.id].getName());
+		addPlayerToWaitingRoom(socket);
+	});
+	
+	socket.on('disconnect', () => {
+        console.log(playerData[socket.id].getName() + " has disconnected.");
+    	var gameId = playerData[socket.id].getGameId();
+		//send other opponents in the game session back to waiting room
+		if (gameId != null){
+			gameData[gameId].getPlayers().forEach((player) => { 
+				if (player != socket.id){
+					playerData[player].getSocket().leave(gameId);
+					performDisconnect(playerData[player].getSocket(), rejoin=true);
+				}
+			});
+		}
+		//remove game session
+		delete gameData[gameId];
+		//disconnect/clean up player data
+		performDisconnect(socket, rejoin=false);
+	});
+
+
+});
+
+function generatePlayerData(socket){
+	var gameId = playerData[socket.id].getGameId();
+	let gamePlayers = gameData[gameId].getPlayers().map(tempId => {return playerData[tempId].getData()});
+	console.log(gamePlayers);
+	return gamePlayers;
+}
+
+function addPlayerToWaitingRoom(socket){
+	waitingRoom.push(socket.id);
+	playerData[socket.id].setWaiting(true);
+	console.log("Added " + socket.id +  " to waiting room"); 
+	socket.join('waitingroom');
+	// make a game instance if there are more than three players
+	//TODO race condition here if many players join at once?
+	if (waitingRoom.length >= 3) {
+		createGameInstance(socket);
+	}
+	// make list of player names who are in waiting room
+	//let waitingPlayers = sessionData["waitingPlayers"].map(tempId => {return sessionData["players"][tempId]["name"]});
+	console.log(playerData[socket.id].getSid() + " " + playerData[socket.id].getName());
+	let waitingPlayers = waitingRoom.map(tempId => {return playerData[tempId].getName()});
+	console.log("waiting players are: " + waitingPlayers);
+	io.in("waitingroom").emit('updateWaitingList', waitingPlayers);
+	console.log("Sent message with updated waiting room list");
+}
+
+function performDisconnect(socket, rejoin=false){
+ 
+	if (!rejoin){
+	    // remove player from waiting room if they are waiting	
+		var pos = waitingRoom.indexOf(socket.id)
+		if (pos >= 0){
+			waitingRoom.splice(pos, 1);
+		} 
+		//remove player session
+		delete playerData[socket.id];
+		console.log("Player " + socket.id + " deleted");
+	} else {
+		//implies a player was removed from a game
+		//place them in the waiting room
+		io.to(socket.id).emit("restart_game", "A player has left the game! You are now in the waiting room");
+		addPlayerToWaitingRoom(socket);
+	}
+	
+}
+
 
 function loadWheel(){
 	let con = mysql.createConnection(connectionDetails);
@@ -58,87 +159,25 @@ function loadWheel(){
 	con.end();
 }
 
-//select first three players and make a game session for them
-function createGameInstance(){
-	console.log("new instance");
+//select first three players and make a Game session for them
+function createGameInstance(socket){
 	let gameId = uuid.v4();
-	sessionData[gameId] = []
-	console.log("New Game Instance");
-	for (var i = 0; i < 2; i++) {
-		var player = sessionData["waitingPlayers"].shift();
-		sessionData["players"][player]["gameId"] = gameId;
-		sessionData[gameId].push(player);
-		//add player to game session room, remove from wait room
+	gameData[gameId] = new Game(gameId);
+	console.log("New Game Instance: " + gameId);
+	for (var i = 0; i < 3; i++) {
+		var player = waitingRoom.shift();
+		playerData[player].setGameId(gameId);
+		playerData[player].setWaiting(false);
+		gameData[gameId].addPlayer(player);
+		playerData[player].getSocket().leave("waitingroom");
+		playerData[player].getSocket().join(gameId);
+		console.log(playerData[player].getSocket().rooms);
+	
 	}
 	// make list of player names who are part of the game session
-	let gamePlayers = sessionData[gameId].map(tempId => {return sessionData["players"][tempId]["name"]});
-	sessionData[gameId].forEach(function (id) {
-		io.to(id).emit('joinGame', {"gameId":gameId, "names": gamePlayers});
-		io.emit('renderWheel', { "wheel":wheel});
-	})
-}
-
-io.on('connection', (socket) => {
-	console.log('A user just connected with ID ' + socket.id);
-    sessionData["players"][socket.id] = {"socket": socket, "name": "New Player", "gameId": null, "score": 0};
-
-	
-	//Need to configure for game session? Set to all current and new right now 
-	socket.on('spinIsClicked', (data) => {
-        io.emit('spinIsClicked', data);
-    });
-	
-	socket.on('joinGame', (info) => {
-		socket.leave('waitingroom');
-		socket.join(info.gameId);		
-	});	
-    
-	socket.on('gotName', (data) => {
-		sessionData["players"][socket.id]["name"] = data;
-		sessionData["waitingPlayers"].push(socket.id);
-		socket.join('waitingroom');
-		// make a game instance if there are more than three players
-		if (sessionData["waitingPlayers"].length >= 2) {
-			createGameInstance();
-		}
-		
-		// make list of player names who are in waiting room
-		let waitingPlayers = sessionData["waitingPlayers"].map(tempId => {return sessionData["players"][tempId]["name"]});
-		io.in("waitingroom").emit('updateWaitingList', waitingPlayers);
-	});
-	
-	socket.on('disconnect', () => {
-        console.log(sessionData["players"][socket.id]["name"] + " has disconnected.");
-        messageClients();
-		if (sessionData["players"][socket.id]["gameId"] != null){
-			console.log("player left the game");
-			var gameId = sessionData["players"][socket.id]["gameId"];
-			var pos = sessionData[gameId].indexOf(socket.id);
-			sessionData[gameId].splice(pos, 1);
-		} else {
-			var pos = sessionData["waitingPlayers"].indexOf(socket.id)
-			if (pos >= 0){
-				sessionData["waitingPlayers"].splice(pos, 1);
-			} 
-		}
-		
-		delete sessionData["players"][socket.id];
-		
-	})
-    socket.on('restart_game', () => {
-	
-	if (sessionData["players"][socket.id]["gameId"] != null){
-		var gameId = sessionData["players"][socket.id]["gameId"];
-		var pos = sessionData[gameId].indexOf(socket.id);
-		sessionData[gameId].splice(pos, 1);
-		socket.leave(gameId);
-		io.to(socket.id).emit("gotName", sessionData["players"][socket.id]["name"]);
-	}
-    });
-
-});
-
-function messageClients() {
-    io.emit("restart_game", "A player has left the game. Restarting game!");
+	io.to(gameId).emit('joinGame', generatePlayerData(socket));
+	let hostID = gameData[gameId].getPlayers()[0];
+	playerData[hostID].setHost();
+	io.to(hostID).emit('setGameLength');
 }
 

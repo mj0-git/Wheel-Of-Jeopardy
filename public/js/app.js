@@ -22,7 +22,7 @@ function sendGotNameMessage(e) {
 
 // update list on client with player names who are waiting
 function updatePlayerList(names) {
-	
+
 	playerList.innerHTML = "";
 	names.forEach(function (name) {
     	let li = document.createElement('li');
@@ -44,6 +44,9 @@ socket.on('setGameLength', () => {
 	//event listener on text field should emit game length
 	//to setServerGameLength, for example:
 	gameLength.style.display = 'flex';
+	document.getElementById('lengthButton').addEventListener('click', () => {
+		gameLength.style.display = 'none';
+	});
 	socket.emit("setServerGameLength", {length: 10});
 });
 

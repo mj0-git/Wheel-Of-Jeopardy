@@ -11,9 +11,6 @@ let lengthText = document.getElementById('lengthText');
 let messages = document.getElementById('messages');
 let form = document.getElementById('form');
 let input = document.getElementById('input');
-let app = express();
-let server = http.createServer(app);
-let io = socketIO(server);
 
 nameForm.addEventListener('submit', sendGotNameMessage);
 

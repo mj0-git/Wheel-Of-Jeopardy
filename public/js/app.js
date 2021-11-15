@@ -7,6 +7,7 @@ let playerListHeading = document.getElementById('playerListHeading');
 let login = document.getElementById('login');
 let before_game = document.getElementById('before_game');
 let gameLength = document.getElementById('gameLength');
+let lengthText = document.getElementById('lengthText');
 
 nameForm.addEventListener('submit', sendGotNameMessage);
 
@@ -44,10 +45,14 @@ socket.on('setGameLength', () => {
 	//event listener on text field should emit game length
 	//to setServerGameLength, for example:
 	gameLength.style.display = 'flex';
+	document.getElementById('lengthText').addEventListener('input', () => {
+		document.getElementById('remainQuest').innerHTML = lengthText.value;
+	});
 	document.getElementById('lengthButton').addEventListener('click', () => {
 		gameLength.style.display = 'none';
 	});
-	socket.emit("setServerGameLength", {length: 10});
+	
+	socket.emit("setServerGameLength", lengthText.value);
 });
 
 // update message to show that players have joined a game session
@@ -174,7 +179,9 @@ function getQuestions(indicatedSegment)
 	resetWheel();
 }
 
-//Timer
+// -------------------------------------------------------
+// Function for timer.
+// -------------------------------------------------------
 const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 3;
 const ALERT_THRESHOLD = 2;

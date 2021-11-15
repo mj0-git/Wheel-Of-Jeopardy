@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Title -->
-    <title>Wheel Of Jeporady</title>
+    <title>Wheel Of Jeopardy</title>
     <!-- Links -->
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
@@ -13,12 +13,16 @@
     <link rel="stylesheet" href="css/main.css">
     <script type="text/javascript" src="js/Winwheel.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <link href="http://db.onlinewebfonts.com/c/b1b36ca25fec551de1c3dc9c28e97b1a?family=SF+Fortune+Wheel" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <table id="login" >
-        <tr class="row_big colorPrimary">
+    <audio id="audio" autoplay loop>
+        <source src= "/audio/themeSong.mp3">
+    </audio>
+    <table id="login">
+        <tr class="row_big logo">
             <td colspan="2">
-                <div class="text-title-big">Wheel Of Jeporady</div>
+                <div class="text-title-big font-face">Wheel Of Jeopardy!</div>
             </td>
         </tr>
         <tr class="row_big colorPrimary">
@@ -27,23 +31,37 @@
                 <form id="nameForm" action="">
                     <input class="colorSecondary" type="text" id="nameSubmit"><br>
                     <input type="submit" value="Submit">
-                  </form>
+                </form>
             </td>
         </tr>
     </table>
     <table id="before_game" style="display: none">
         <tr class="row_small colorPrimary">
-          <td colspan="2">
-                    <div class="text-title-small">
-                        <div id="playerListDiv">	
-                            <h4 id="playerListHeading">Current Players</h4>
-                            <ul id="players">
-                            </ul>
-                        </div>
+            <td colspan="2">
+                <div class="text-title-small">
+                    <div id="playerListDiv">
+                        <h4 id="playerListHeading">Current Players</h4>
+                        <ul id="players">
+                        </ul>
                     </div>
-             </td>
+                </div>
+            </td>
         </tr>
     </table>
+
+    <div class="scoreboardData" id="scoreboard" style="display: none">
+        <div class="timer">Time</div>
+        <div class="scoreboardName scoreboardNameOne"> Player One</div>
+        <div class="scoreboardName scoreboardNameTwo">Player Two</div>
+        <div class="scoreboardName scoreboardNameThree">Player Three</div>
+        <div class="remainingQuestions">Questions Remaining</div>
+        <div class="timeLeft" id="app"></div>
+        <div class="scorboardScore">0</div>
+        <div class="scorboardScore">0</div>
+        <div class="scorboardScore">0</div>
+        <div class="remainLength">0</div>
+    </div>
+
     <table id="start_game" style="display: none">
         <tr>
             <td width="438" height="582" align="center" valign="center">
@@ -51,16 +69,16 @@
                     <label id="question"></label>
                     <table style="width:100%">
                         <tr>
-                          <th id="choice-one"></th>
-                          <th id="choice-two"></th>
+                            <th id="choice-one"></th>
+                            <th id="choice-two"></th>
                         </tr>
                         <tr>
                             <th id="choice-three"></th>
                             <th id="choice-four"></th>
                         </tr>
-                      </table>
+                    </table>
                 </div>
-                <canvas class="the_wheel"  id="canvas" width="434" height="434">
+                <canvas class="the_wheel" id="canvas" width="434" height="434">
                     <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
                 </canvas>
                 <div class="spin_controls">

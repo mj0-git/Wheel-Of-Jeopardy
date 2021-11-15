@@ -1,4 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Anton');
+@import url('http://db.onlinewebfonts.com/c/b1b36ca25fec551de1c3dc9c28e97b1a?family=SF+Fortune+Wheel');
+@import url('https://static.parade.com/wp-content/uploads/2020/12/jeopardy-board.jpeg');
+@import url('https://media.giphy.com/media/fs03kG7ckPyqwI0bbl/giphy.gif');
+@import url('https://cdn1.vectorstock.com/i/thumb-large/02/15/shining-retro-banner-frame-with-glowing-lights-vector-33180215.jpg');
 
 /* COLOURS
 
@@ -8,7 +12,6 @@
   @wrong: #c36161
   @correct: #b1c191
 */
-
 body {
   text-align: center;
 }
@@ -19,6 +22,18 @@ body {
     background-image: url(../images/wheel_back.png);
     background-position: center;
     background-repeat: none;
+}
+
+.font-face {
+    font-family: 'SF Fortune Wheel';
+    source src: url('http://db.onlinewebfonts.com/t/b1b36ca25fec551de1c3dc9c28e97b1a.eot');
+    -webkit-text-stroke: 4px black;
+}
+
+.logo {
+    background-image: url('https://media.giphy.com/media/fs03kG7ckPyqwI0bbl/giphy.gif'), url('https://static.parade.com/wp-content/uploads/2020/12/jeopardy-board.jpeg');
+    background-size: cover, cover;
+    width: 100%, 100%;
 }
 
 * {
@@ -202,14 +217,132 @@ input[type=text], select {
   font-size: 30px;
 }
 
+
 .scoreboardData {
-  padding: 15px 0;
-  border: 30px solid #2c2c54;
-  border-bottom: 5px  solid #2c2c54;
-  border-top: none;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    width: 100%;
+}
+
+.scorboardScore {
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    background-color: #222256;
+}
+
+.scoreboardName {
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    background-color: #1c1c3d;
+}
+
+.remainingQuestions {
+    font-weight: bold;
+    border-left: 1px solid #ddd;
+    background-color: #45456c;
+}
+
+.timer {
+    font-weight: bold;
+    border-right: 1px solid #ddd;
+    background-color: #45456c;
+}
+
+.scoreboardNameOne {
+    color: #fc0f0f;
+}
+
+.scoreboardNameTwo {
+    color: #1729d7;
+}
+
+.scoreboardNameThree {
+    color: #26fa17;
+}
+
+.scorboardScore {
+    font-size: 2em;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+}
+
+.remainLength {
+    font-size: 2em;
+    text-align: center;
+    background-color: #45456c;
+    background-size: 60%;
+    background-position: center;
+}
+
+.timeLeft {
+    border-right: 1px solid #ddd;
+    text-align: center;
+    vertical-align: central;
+    background-color: #45456c;
+    background-size: 60%;
+    background-position: center;
 }
 
 #summary {
   max-width: 65em;
   margin: 0 auto;
+}
+
+.base-timer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: inline-flex;
+}
+
+.base-timer__svg {
+    transform: scaleX(-1);
+}
+
+.base-timer__circle {
+    fill: none;
+    stroke: none;
+}
+
+.base-timer__path-elapsed {
+    stroke-width: 7px;
+    stroke: grey;
+}
+
+.base-timer__path-remaining {
+    stroke-width: 7px;
+    stroke-linecap: round;
+    transform: rotate(90deg);
+    transform-origin: center;
+    transition: 1s linear all;
+    fill-rule: nonzero;
+    stroke: currentColor;
+}
+
+    .base-timer__path-remaining.green {
+        color: rgb(65, 184, 131);
+    }
+
+    .base-timer__path-remaining.orange {
+        color: orange;
+    }
+
+    .base-timer__path-remaining.red {
+        color: red;
+    }
+
+.base-timer__label {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
 }

@@ -16,17 +16,17 @@ app.use(express.static(publicPath));
 
 
 
-let mysql      = require('mysql2');
+let mysql = require('mysql2');
 let connectionDetails = {
-    host: "localhost",
-    user: "test",
-    password: "object00",
-    database: "jeopardy"
+	host: "localhost",
+	user: "trivial_admin",
+	password: "password",
+	database: "jeopardy"
 };
 
 
-server.listen(port, ()=> {
-    console.log(`Server is up on port ${port}.`)
+server.listen(port, () => {
+	console.log(`Server is up on port ${port}.`)
 });
 
 //dictionary to store player data and game data
@@ -51,7 +51,6 @@ io.on('connection', (socket) => {
     });
   
 	socket.on('setServerGameLength', (data) => {
-		console.log(data);
 		//save game length in Game instance variable
 		var gameId = playerData[socket.id].getGameId();
 		gameData[gameId].setGameLength(data.length);
@@ -65,7 +64,6 @@ io.on('connection', (socket) => {
 	socket.on('gotName', (data) => {
 		console.log("Player " + socket.id + " entered the name " + data);
 		playerData[socket.id].setName(data);
-		console.log("MY PLAYER" + playerData[socket.id].getName());
 		addPlayerToWaitingRoom(socket);
 	});
 	
@@ -93,7 +91,6 @@ io.on('connection', (socket) => {
 function generatePlayerData(socket){
 	var gameId = playerData[socket.id].getGameId();
 	let gamePlayers = gameData[gameId].getPlayers().map(tempId => {return playerData[tempId].getData()});
-	console.log(gamePlayers);
 	return gamePlayers;
 }
 
@@ -109,7 +106,6 @@ function addPlayerToWaitingRoom(socket){
 	}
 	// make list of player names who are in waiting room
 	//let waitingPlayers = sessionData["waitingPlayers"].map(tempId => {return sessionData["players"][tempId]["name"]});
-	console.log(playerData[socket.id].getSid() + " " + playerData[socket.id].getName());
 	let waitingPlayers = waitingRoom.map(tempId => {return playerData[tempId].getName()});
 	console.log("waiting players are: " + waitingPlayers);
 	io.in("waitingroom").emit('updateWaitingList', waitingPlayers);
@@ -130,6 +126,7 @@ function performDisconnect(socket, rejoin=false){
 	} else {
 		//implies a player was removed from a game
 		//place them in the waiting room
+		playerData[socket.id].setGameId(null);
 		io.to(socket.id).emit("restart_game", "A player has left the game! You are now in the waiting room");
 		addPlayerToWaitingRoom(socket);
 	}
@@ -142,8 +139,8 @@ function loadWheel(){
 	con.query('SELECT * FROM questions ORDER BY category', function (error, results, fields) {
 		if (error) throw error;
 		var category = new Category(results[0].category, 5);
-		for (i in results){
-			if (results[i].category != category.name){
+		for (i in results) {
+			if (results[i].category != category.name) {
 				wheel.push(category);
 				category = new Category(results[i].category, 5);
 			}
@@ -152,7 +149,7 @@ function loadWheel(){
 			var answer = results[i].correct_answer
 			var points = results[i].points
 			category.addQuestion(title, choices, answer, points);
-		} 
+		}
 		wheel.push(category);
 		//console.log(wheel);
 	});

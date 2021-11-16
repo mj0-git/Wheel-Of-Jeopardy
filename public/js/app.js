@@ -264,6 +264,7 @@ function onTimesUp() {
 }
 
 function startTimer() {
+	timeLeft = TIME_LIMIT;
 	timerInterval = setInterval(() => {
 		timePassed = timePassed += 1;
 		timeLeft = TIME_LIMIT - timePassed;

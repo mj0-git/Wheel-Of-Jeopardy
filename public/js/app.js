@@ -317,7 +317,7 @@ function startTimer() {
 		if (timeLeft === 0) {
 			onTimesUp();
 		}
-	}, 5);
+	}, 1000);
 }
 
 function formatTime(time) {

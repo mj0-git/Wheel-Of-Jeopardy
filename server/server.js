@@ -85,7 +85,6 @@ io.on('connection', (socket) => {
 		performDisconnect(socket, rejoin=false);
 	});
 
-
 });
 
 function generatePlayerData(socket){

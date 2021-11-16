@@ -8,8 +8,13 @@ let login = document.getElementById('login');
 let before_game = document.getElementById('before_game');
 let gameLength = document.getElementById('gameLength');
 let lengthText = document.getElementById('lengthText');
+let messages = document.getElementById('messages');
+let form = document.getElementById('form');
+let input = document.getElementById('input');
 
 nameForm.addEventListener('submit', sendGotNameMessage);
+
+
 
 //emit message when name is entered in form
 function sendGotNameMessage(e) {
@@ -110,7 +115,20 @@ socket.on('spinIsClicked', (data) => {
 	startSpin(stopAt);
 });
 
+form.addEventListener('submit', function (e) {
+	e.preventDefault();
+	if (input.value) {
+		socket.emit('chat message', input.value);
+		input.value = '';
+	}
+});
 
+socket.on('chat message', function (msg) {
+	var item = document.createElement('li');
+	item.textContent = msg;
+	messages.appendChild(item);
+	window.scrollTo(0, document.body.scrollHeight);
+});
 // Vars used by the code in this page to do power controls.
 let wheelPower    = 1;
 let wheelSpinning = false;

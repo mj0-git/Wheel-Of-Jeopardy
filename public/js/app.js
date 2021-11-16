@@ -52,13 +52,20 @@ socket.on('setGameLength', () => {
 	//to setServerGameLength, for example:
 	gameLength.style.display = 'flex';
 	document.getElementById('lengthText').addEventListener('input', () => {
-		document.getElementById('remainQuest').innerHTML = lengthText.value;
+		if (lengthText.value <= 30) {
+			document.getElementById('lengthButton').style.display = 'initial';
+			document.getElementById('remainQuest').innerHTML = lengthText.value;
+			socket.emit("setServerGameLength", lengthText.value);
+			document.getElementById('valueError').style.display = 'none';
+			document.getElementById('lengthButton').addEventListener('click', () => {
+				gameLength.style.display = 'none';
+			});
+		} else {
+			document.getElementById('lengthButton').style.display = 'none';
+			document.getElementById('valueError').innerHTML = "Maximum questions length is 30.";
+			document.getElementById('valueError').style.display = "block";
+		}
 	});
-	document.getElementById('lengthButton').addEventListener('click', () => {
-		gameLength.style.display = 'none';
-	});
-	
-	socket.emit("setServerGameLength", lengthText.value);
 });
 
 // update message to show that players have joined a game session

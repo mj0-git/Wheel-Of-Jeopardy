@@ -1,6 +1,7 @@
 let socket = io();
 let nameForm = document.getElementById('nameForm');
 let nameInput = document.getElementById('nameSubmit');
+let msgInput = document.getElementById('usermsg');
 let playerList = document.getElementById('players');
 let playerListDiv = document.getElementById('playerListDiv');
 let playerListHeading = document.getElementById('playerListHeading');
@@ -9,7 +10,7 @@ let before_game = document.getElementById('before_game');
 let gameLength = document.getElementById('gameLength');
 let lengthText = document.getElementById('lengthText');
 let messages = document.getElementById('messages');
-let form = document.getElementById('form');
+let msgform = document.getElementById('message');
 let input = document.getElementById('input');
 
 nameForm.addEventListener('submit', sendGotNameMessage);
@@ -108,19 +109,21 @@ socket.on('spinIsClicked', (data) => {
 	startSpin(stopAt);
 });
 
-form.addEventListener('submit', function (e) {
+msgform.addEventListener('submit', function (e) {
 	e.preventDefault();
-	if (input.value) {
-		socket.emit('chat message', input.value);
-		input.value = '';
+	if (msgInput.value) {
+		socket.emit('rcv message', msgInput.value);
+		msgInput.value = '';
 	}
 });
+
+
 
 socket.on('chat message', function (msg) {
 	var item = document.createElement('li');
 	item.textContent = msg;
 	messages.appendChild(item);
-	window.scrollTo(0, document.body.scrollHeight);
+	//window.scrollTo(0, document.body.scrollHeight);
 });
 // Vars used by the code in this page to do power controls.
 let wheelPower    = 1;

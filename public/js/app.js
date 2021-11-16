@@ -212,7 +212,6 @@ function startSpin(stopAt)
 		wheelSpinning = true;
 	}
 
-	startTimer();
 }
 
 // -------------------------------------------------------
@@ -242,6 +241,8 @@ function getQuestions(indicatedSegment)
 	console.log(indicatedSegment['questions']);
 	
 	resetWheel();
+
+	startTimer();
 }
 
 // -------------------------------------------------------

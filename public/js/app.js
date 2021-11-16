@@ -309,7 +309,6 @@ function startTimer() {
 		document.getElementById("base-timer-label").innerHTML = formatTime(
 			timeLeft
 		);
-		console.log("Time Passed: " + timePassed);			//TEMP 
 		setCircleDasharray();
 		setRemainingPathColor(timeLeft);
 

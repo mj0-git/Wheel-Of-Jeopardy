@@ -333,6 +333,9 @@ function setRemainingPathColor(timeLeft) {
 	const { alert, warning, info } = COLOR_CODES;
 	document
 		.getElementById("base-timer-path-remaining")
+		.classList.remove(warning.color);
+	document
+		.getElementById("base-timer-path-remaining")
 		.classList.add(info.color);
 	if (timeLeft <= alert.threshold) {
 		document

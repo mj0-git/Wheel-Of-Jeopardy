@@ -296,7 +296,7 @@ document.getElementById("app").innerHTML = `
 </div>
 `;
 
-function onTimesUp(timerInterval) {
+function onTimesUp() {
 	clearInterval(timerInterval);
 }
 
@@ -311,7 +311,7 @@ function startTimer() {
 		setRemainingPathColor(timeLeft);
 
 		if (timeLeft === 0) {
-			onTimesUp(timerInterval);
+			onTimesUp();
 		}
 	}, 1000);
 }

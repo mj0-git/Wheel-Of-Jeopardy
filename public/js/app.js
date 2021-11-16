@@ -89,10 +89,13 @@ socket.on('joinGame', (info) => {
 
 socket.on('renderWheel', (info) => {
 	theWheelData = info.wheel;
+	numQuestions = info.numQuestions;
+	document.getElementById('remainQuest').innerHTML = numQuestions;
 	for(i=1; i <=5; i++){
 		theWheel['segments'][i]['text'] = theWheelData[i].name;
 		theWheel['segments'][i]['questions'] = theWheelData[i].questions;
 	}
+	
 	theWheel.draw(); 
 	resetWheel();
 });
@@ -212,6 +215,7 @@ function startSpin(stopAt)
 		wheelSpinning = true;
 	}
 
+	startTimer();
 }
 
 // -------------------------------------------------------
@@ -241,8 +245,6 @@ function getQuestions(indicatedSegment)
 	console.log(indicatedSegment['questions']);
 	
 	resetWheel();
-
-	startTimer();
 }
 
 // -------------------------------------------------------
@@ -313,7 +315,7 @@ function startTimer() {
 		if (timeLeft === 0) {
 			onTimesUp();
 		}
-	}, 1000);
+	}, 5);
 }
 
 function formatTime(time) {

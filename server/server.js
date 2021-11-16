@@ -15,7 +15,6 @@ let Category = require('../models/category.js');
 app.use(express.static(publicPath));
 
 
-
 let mysql = require('mysql2');
 let connectionDetails = {
 	host: "localhost",
@@ -57,7 +56,7 @@ io.on('connection', (socket) => {
 
 		gameData[gameId].startGame();
 		//tell all players in game session to show the wheel
-		io.to(gameId).emit('renderWheel', { "wheel":wheel});
+		io.to(gameId).emit('renderWheel', { "wheel":wheel, "numQuestions": data});
 
 	});
 	socket.on('rcv message', (msg) => {

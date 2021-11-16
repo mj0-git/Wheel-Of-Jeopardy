@@ -51,9 +51,9 @@
 
     <div class="scoreboardData" id="scoreboard" style="display: none">
         <div class="timer">Time</div>
-        <div class="scoreboardName scoreboardNameOne" id="player">Player One</div>
-        <div class="scoreboardName scoreboardNameTwo" id="player">Player Two</div>
-        <div class="scoreboardName scoreboardNameThree" id="player">Player Three</div>
+        <div class="scoreboardName scoreboardNameOne" id="player-one">Player One</div>
+        <div class="scoreboardName scoreboardNameTwo" id="player-two">Player Two</div>
+        <div class="scoreboardName scoreboardNameThree" id="player-three">Player Three</div>
         <div class="remainingQuestions">Questions Remaining</div>
         <div class="timeLeft" id="app"></div>
         <div class="scorboardScore">0</div>
@@ -79,14 +79,16 @@
                     <label id="question"></label>
                     <table style="width:100%">
                         <tr>
-                            <th id="choice-one"></th>
-                            <th id="choice-two"></th>
+                            <th id="choice-one" onclick="socket.emit('click', 'choice-one');"></th>
+                            <th id="choice-two"onclick="socket.emit('click', 'choice-two');"></th>
                         </tr>
                         <tr>
-                            <th id="choice-three"></th>
-                            <th id="choice-four"></th>
+                            <th id="choice-three"onclick="socket.emit('click', 'choice-three');"></th>
+                            <th id="choice-four"onclick="socket.emit('click', 'choice-four');"></th>
+                            <th id="answer" style="display: none"></th>
                         </tr>
                     </table>
+                    <label id="is_correct"></label>
                 </div>
                 <canvas class="the_wheel" id="canvas" width="434" height="434">
                     <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>

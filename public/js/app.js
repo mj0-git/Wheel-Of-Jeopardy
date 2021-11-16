@@ -8,6 +8,7 @@ let login = document.getElementById('login');
 let before_game = document.getElementById('before_game');
 let gameLength = document.getElementById('gameLength');
 let lengthText = document.getElementById('lengthText');
+let temp_correct = null; 
 
 nameForm.addEventListener('submit', sendGotNameMessage);
 
@@ -61,6 +62,14 @@ socket.on('joinGame', (info) => {
 	start_game.style.display = 'table';
 	scoreboard.style.display = 'grid';
 	audio.src = "";
+	//for(i=0; i < 3; i++){
+	//	console.log(info[i].name);
+	//}
+	document.getElementById('player-one').innerHTML = info[0].name;
+	document.getElementById('player-two').innerHTML = info[1].name;
+	document.getElementById('player-three').innerHTML = info[2].name;
+	document.getElementById('before_game');
+	
 	//playerListHeading.innerText = "Your opponents are: "+ info.names;
 	//playerListDiv.style.display = 'none';
 });
@@ -79,11 +88,36 @@ socket.on('updateWaitingList', (playerNames) => {
 	 updatePlayerList(playerNames);
 });
 
+socket.on('checkAnswer', (data) => {
+	checkAnswer(data);
+	console.log(data);
+});
+
 socket.on('restart_game', (data) =>{
-    alert(data)
+    //alert(data)
+	start_game.style.display = 'none';
+    before_game.style.display = 'none';
+	gameLength.style.display = 'none';
+	scoreboard.style.display = 'none';
+	login.style.display = 'table';
+	nameForm.style.display = 'block';
     restartGame();
 });
 
+function checkAnswer(data) {
+	var answer = document.getElementById('answer').innerHTML
+	var attempt = document.getElementById(data).innerHTML
+	if(answer == attempt){
+		document.getElementById('is_correct').innerHTML = "CORRECT";
+	}
+	else{
+		document.getElementById('is_correct').innerHTML = "INCORRECT";
+	}
+	//console.log(answer)
+	console.log(answer == attempt); 
+	console.log(attempt); 
+	console.log("correct");
+}
 
 function restartGame() {
     playerListHeading.innerText = "Connected Players";
@@ -138,6 +172,7 @@ function startSpin(stopAt)
 	// Ensure that spinning can't be clicked again while already running.
 	if (wheelSpinning == false) {
 		theWheel.animation.spins = 3;
+		document.getElementById('is_correct').innerHTML = "";
 		// Disable the spin button so can't click again while wheel is spinning.
 		document.getElementById('spin_button').src       = "images/spin_off.png";
 		document.getElementById('spin_button').className = "";
@@ -173,6 +208,8 @@ function getQuestions(indicatedSegment)
 	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][0].choices[1];
 	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][0].choices[2];
 	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][0].choices[3];
+	document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
+	
 
 	console.log(indicatedSegment['questions']);
 	

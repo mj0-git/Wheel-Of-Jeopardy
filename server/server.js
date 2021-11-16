@@ -85,6 +85,10 @@ io.on('connection', (socket) => {
 		performDisconnect(socket, rejoin=false);
 	});
 
+	socket.on('click', function(index){
+        io.emit('checkAnswer', index);
+    });
+
 
 });
 

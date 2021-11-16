@@ -1,6 +1,7 @@
 let socket = io();
 let nameForm = document.getElementById('nameForm');
 let nameInput = document.getElementById('nameSubmit');
+let msgInput = document.getElementById('usermsg');
 let playerList = document.getElementById('players');
 let playerListDiv = document.getElementById('playerListDiv');
 let playerListHeading = document.getElementById('playerListHeading');
@@ -9,8 +10,13 @@ let before_game = document.getElementById('before_game');
 let gameLength = document.getElementById('gameLength');
 let lengthText = document.getElementById('lengthText');
 let temp_correct = null; 
+let messages = document.getElementById('messages');
+let msgform = document.getElementById('message');
+let input = document.getElementById('input');
 
 nameForm.addEventListener('submit', sendGotNameMessage);
+
+
 
 //emit message when name is entered in form
 function sendGotNameMessage(e) {
@@ -47,13 +53,20 @@ socket.on('setGameLength', () => {
 	//to setServerGameLength, for example:
 	gameLength.style.display = 'flex';
 	document.getElementById('lengthText').addEventListener('input', () => {
-		document.getElementById('remainQuest').innerHTML = lengthText.value;
+		if (lengthText.value <= 30) {
+			document.getElementById('lengthButton').style.display = 'initial';
+			document.getElementById('remainQuest').innerHTML = lengthText.value;
+			socket.emit("setServerGameLength", lengthText.value);
+			document.getElementById('valueError').style.display = 'none';
+			document.getElementById('lengthButton').addEventListener('click', () => {
+				gameLength.style.display = 'none';
+			});
+		} else {
+			document.getElementById('lengthButton').style.display = 'none';
+			document.getElementById('valueError').innerHTML = "Maximum questions length is 30.";
+			document.getElementById('valueError').style.display = "block";
+		}
 	});
-	document.getElementById('lengthButton').addEventListener('click', () => {
-		gameLength.style.display = 'none';
-	});
-	
-	socket.emit("setServerGameLength", lengthText.value);
 });
 
 // update message to show that players have joined a game session
@@ -137,7 +150,22 @@ socket.on('spinIsClicked', (data) => {
 	startSpin(stopAt);
 });
 
+msgform.addEventListener('submit', function (e) {
+	e.preventDefault();
+	if (msgInput.value) {
+		socket.emit('rcv message', msgInput.value);
+		msgInput.value = '';
+	}
+});
 
+
+
+socket.on('chat message', function (msg) {
+	var item = document.createElement('li');
+	item.textContent = msg;
+	messages.appendChild(item);
+	//window.scrollTo(0, document.body.scrollHeight);
+});
 // Vars used by the code in this page to do power controls.
 let wheelPower    = 1;
 let wheelSpinning = false;

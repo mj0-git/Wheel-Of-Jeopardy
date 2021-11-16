@@ -60,6 +60,10 @@ io.on('connection', (socket) => {
 		io.to(gameId).emit('renderWheel', { "wheel":wheel});
 
 	});
+	socket.on('rcv message', (msg) => {
+		io.emit('chat message', msg);
+
+	});
  
 	socket.on('gotName', (data) => {
 		console.log("Player " + socket.id + " entered the name " + data);

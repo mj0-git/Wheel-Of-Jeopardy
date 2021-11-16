@@ -301,13 +301,15 @@ function onTimesUp() {
 }
 
 function startTimer() {
+	timeLeft = TIME_LIMIT;
+	timePassed = 0;
 	timerInterval = setInterval(() => {
 		timePassed = timePassed += 1;
 		timeLeft = TIME_LIMIT - timePassed;
 		document.getElementById("base-timer-label").innerHTML = formatTime(
 			timeLeft
 		);
-		console.log("Time Passed: " + timePassed);
+		console.log("Time Passed: " + timePassed);			//TEMP 
 		setCircleDasharray();
 		setRemainingPathColor(timeLeft);
 

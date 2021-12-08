@@ -302,7 +302,7 @@ function onTimesUp() {
 }
 
 function startTimer() {
-	document.getElementById("base-timer-path-remaining").classList.remove(info.color);
+	document.getElementById("base-timer-path-remaining").classList.add(info.color);
 	timeLeft = TIME_LIMIT;
 	timePassed = 0;
 	timerInterval = setInterval(() => {

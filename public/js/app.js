@@ -317,8 +317,8 @@ function startTimer() {
 			onTimesUp();
 		}
 	}, 1000);
-	document.getElementById("base-timer-path-remaining").classList.remove(alert.color);
-	document.getElementById("base-timer-path-remaining").classList.add(info.color);
+	document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
+	document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
 	document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
 }
 

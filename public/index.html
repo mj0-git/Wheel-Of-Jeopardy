@@ -14,6 +14,7 @@
     <script type="text/javascript" src="js/Winwheel.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <link href="http://db.onlinewebfonts.com/c/b1b36ca25fec551de1c3dc9c28e97b1a?family=SF+Fortune+Wheel" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
     <audio id="audio" autoplay loop>
@@ -76,20 +77,36 @@
     <table id="start_game" style="display: none">
         <tr>
             <td width="438" height="582" align="center" valign="center">
-                <div class="question_display">
-                    <label id="question"></label>
-                    <table style="width:100%">
+                <div class="display-box" align="center">
+                    <table id="points_display" class ="points-table" style="display: none" >
+                    <th colspan="2">Select Point</th>  
+                     <tr>
+                        <td id="point-0" onclick="socket.emit('click-point', '0');" style="display: none"> Point 10 </td>
+                        <td id="point-1" onclick="socket.emit('click-point', '1');" style="display: none"> Point 20 </td>
+                      </tr>
+                      <tr>
+                        <td id="point-2" onclick="socket.emit('click-point', '2');" style="display: none"> Point 30 </td>
+                        <td id="point-3" onclick="socket.emit('click-point', '3');"style="display: none"> Point 40 </td>
+                      </tr>
+                      <tr>
+                        <td id="point-4" onclick="socket.emit('click-point', '4');"colspan="2" style="display: none"> Point 50 </td>
+                      </tr>
+                    </table>
+                    <table id="question_display" class ="questions-table" style="display: none" >
+                        <th colspan="2" id="question"></th>  
                         <tr>
-                            <th id="choice-one" onclick="socket.emit('click', 'choice-one');"></th>
-                            <th id="choice-two" onclick="socket.emit('click', 'choice-two');"></th>
+                            <td id="choice-one" onclick="socket.emit('click', 'choice-one');"></th>
+                            <td id="choice-two" onclick="socket.emit('click', 'choice-two');"></th>
                         </tr>
                         <tr>
-                            <th id="choice-three"onclick="socket.emit('click', 'choice-three');"></th>
-                            <th id="choice-four"onclick="socket.emit('click', 'choice-four');"></th>
-                            <th id="answer" style="display: none"></th>
+                            <td id="choice-three"onclick="socket.emit('click', 'choice-three');"></th>
+                            <td id="choice-four"onclick="socket.emit('click', 'choice-four');"></th>
+                            <td id="answer" style="display: none"></th>
+                        </tr>
+                        <tr>
+                            <td id="is_correct" colspan="2" > </td>
                         </tr>
                     </table>
-                    <label id="is_correct"></label>
                 </div>
                 <canvas class="the_wheel" id="canvas" width="434" height="434">
                     <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>

@@ -92,6 +92,13 @@ io.on('connection', (socket) => {
         io.emit('checkAnswer', index);
     });
 
+	socket.on('click-point', function(index){
+
+		setTimeout(function(){
+			io.emit('displayQuestion', index);
+		}, 3000); 
+    });
+
 
 });
 

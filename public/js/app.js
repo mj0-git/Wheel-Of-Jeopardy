@@ -76,6 +76,7 @@ socket.on('joinGame', (info) => {
 	scoreboard.style.display = 'grid';
 	buzzbutton.style.display = 'none';
 	audio.src = "";
+	displayCurrent(0);
 	//for(i=0; i < 3; i++){
 	//	console.log(info[i].name);
 	//}
@@ -86,6 +87,7 @@ socket.on('joinGame', (info) => {
 	
 	//playerListHeading.innerText = "Your opponents are: "+ info.names;
 	//playerListDiv.style.display = 'none';
+	displayCurrent();
 });
 
 socket.on('renderWheel', (info) => {
@@ -237,7 +239,7 @@ function resetWheel()
 
 
 function getQuestions(indicatedSegment)
-{	
+{
 	document.getElementById('buzzbutton').style.display = 'initial';
 	timeraudio.src = "/audio/Countdown.mp3";
 	startTimer();
@@ -249,6 +251,7 @@ function getQuestions(indicatedSegment)
 		buzzinaudio.src = "/audio/buzzin.wav";
 		onTimesUp();
 		timeraudio.src = "/audio/thinkingmusic.mp3";
+		displayCurrent(1);
 		document.getElementById('question').innerHTML = indicatedSegment['questions'][0].title;
 		document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][0].choices[0];
 		document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][0].choices[1];
@@ -269,6 +272,33 @@ function getQuestions(indicatedSegment)
 	console.log(indicatedSegment['questions']);
 
 	resetWheel();
+}
+
+function displayCurrent(currentNum) {
+	if (currentNum == 0) {
+		document.getElementById('player-one').classList.add('playerOneTurn');
+		document.getElementById('player-one').classList.add('glow');
+		document.getElementById('player-two').classList.remove('playerTwoTurn');
+		document.getElementById('player-two').classList.remove('glow');
+		document.getElementById('player-three').classList.remove('playerThreeTurn');
+		document.getElementById('player-three').classList.remove('glow');
+	}
+	if (currentNum == 1) {
+		document.getElementById('player-one').classList.remove('playerOneTurn');
+		document.getElementById('player-one').classList.remove('glow');
+		document.getElementById('player-two').classList.add('playerTwoTurn');
+		document.getElementById('player-two').classList.add('glow');
+		document.getElementById('player-three').classList.remove('playerThreeTurn');
+		document.getElementById('player-three').classList.remove('glow');
+	}
+	if (currentNum == 2) {
+		document.getElementById('player-one').classList.remove('playerOneTurn');
+		document.getElementById('player-one').classList.remove('glow');
+		document.getElementById('player-two').classList.remove('playerTwoTurn');
+		document.getElementById('player-two').classList.remove('glow');
+		document.getElementById('player-three').classList.add('playerThreeTurn');
+		document.getElementById('player-three').classList.add('glow');
+	}
 }
 
 // -------------------------------------------------------

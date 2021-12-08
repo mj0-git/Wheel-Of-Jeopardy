@@ -302,7 +302,6 @@ function onTimesUp() {
 }
 
 function startTimer() {
-	document.getElementById("base-timer-path-remaining").classList.add(info.color);
 	timeLeft = TIME_LIMIT;
 	timePassed = 0;
 	timerInterval = setInterval(() => {
@@ -333,7 +332,14 @@ function formatTime(time) {
 
 function setRemainingPathColor(timeLeft) {
 	const { alert, warning, info } = COLOR_CODES;
-	if (timeLeft <= alert.threshold) {
+	if (timeLeft == TIME_LIMIT) {
+		document
+			.getElementById("base-timer-path-remaining")
+			.classList.remove(alert.color);
+		document
+			.getElementById("base-timer-path-remaining")
+			.classList.add(info.color);
+	} else if (timeLeft <= alert.threshold) {
 		document
 			.getElementById("base-timer-path-remaining")
 			.classList.remove(warning.color);

@@ -95,8 +95,14 @@
                     <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
                 </canvas>
                 <div class="spin_controls">
-                    <img id="spin_button" src="/images/spin_off.png" alt="Spin"/>
-                    <button type="submit" class="buzzbutton" id="buzzbutton" >BUZZ IN</button>
+                    <img id="spin_button" src="/images/spin_off.png" alt="Spin" />
+                    <button type="submit" class="buzzbutton" id="buzzbutton">BUZZ IN</button>
+                    <audio id="timeraudio" style="display: none" autoplay>
+                        <source src="">
+                    </audio>
+                    <audio id="buzzinaudio" style="display: none" autoplay>
+                        <source src="">
+                    </audio>
                     <br /><br />
                 </div>
                 <div id="wrapper">

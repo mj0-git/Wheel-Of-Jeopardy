@@ -74,6 +74,7 @@ socket.on('joinGame', (info) => {
 	before_game.style.display = 'none';
 	start_game.style.display = 'table';
 	scoreboard.style.display = 'grid';
+	buzzbutton.style.display = 'none';
 	audio.src = "";
 	//for(i=0; i < 3; i++){
 	//	console.log(info[i].name);
@@ -231,19 +232,28 @@ function resetWheel()
 
 
 function getQuestions(indicatedSegment)
-{	
-	document.getElementById('question').innerHTML = indicatedSegment['questions'][0].title;
-	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][0].choices[0];
-	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][0].choices[1];
-	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][0].choices[2];
-	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][0].choices[3];
-	document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
-	
+{
+	document.getElementById('buzzbutton').style.display = 'initial';
+	timeraudio.src = "/audio/Countdown.mp3";
+	startTimer();
+
+	document.getElementById('buzzbutton').addEventListener('click', () => {
+		buzzbutton.style.display = 'none';
+		buzzinaudio.src = "/audio/buzzin.wav";
+		onTimesUp();
+		document.getElementById('question').innerHTML = indicatedSegment['questions'][0].title;
+		document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][0].choices[0];
+		document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][0].choices[1];
+		document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][0].choices[2];
+		document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][0].choices[3];
+		document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
+	});
 
 	console.log(indicatedSegment['questions']);
 	
 	resetWheel();
-	startTimer();
+	//startTimer();
+	//timeraudio.src = "/audio/Countdown.mp3";
 }
 
 // -------------------------------------------------------
@@ -273,7 +283,10 @@ let timeLeft = TIME_LIMIT;
 let timerInterval = null;
 let remainingPathColor = COLOR_CODES.info.color;
 
-document.getElementById("app").innerHTML = `
+reset();
+
+function reset() {
+	document.getElementById("app").innerHTML = `
 <div class="base-timer">
   <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <g class="base-timer__circle">
@@ -292,13 +305,18 @@ document.getElementById("app").innerHTML = `
     </g>
   </svg>
   <span id="base-timer-label" class="base-timer__label">${formatTime(
-	timeLeft
-)}</span>
+		timeLeft
+	)}</span>
 </div>
 `;
+}
 
 function onTimesUp() {
+	buzzbutton.style.display = 'none';
+	timeraudio.src = "";
 	clearInterval(timerInterval);
+	timeLeft = TIME_LIMIT;
+	reset();
 }
 
 function startTimer() {
@@ -315,6 +333,7 @@ function startTimer() {
 
 		if (timeLeft === 0) {
 			onTimesUp();
+			timeraudio.src = "/audio/timesup.mp3";
 		}
 	}, 1000);
 }

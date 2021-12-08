@@ -235,6 +235,7 @@ function getQuestions(indicatedSegment)
 {	
 	document.getElementById('buzzbutton').style.display = 'initial';
 	timeraudio.src = "/audio/Countdown.mp3";
+	document.getElementById('lengthText') = --lengthText.value;
 	startTimer();
 
 	document.getElementById('buzzbutton').addEventListener('click', () => {
@@ -248,8 +249,6 @@ function getQuestions(indicatedSegment)
 		document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][0].choices[3];
 		document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
 	});
-
-	document.getElementById('lengthText') = --lengthText.value;
 
 	/*
 		Once questions get to zero - end the game (implement code below)

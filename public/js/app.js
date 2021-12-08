@@ -74,6 +74,7 @@ socket.on('joinGame', (info) => {
 	before_game.style.display = 'none';
 	start_game.style.display = 'table';
 	scoreboard.style.display = 'grid';
+	buzzbutton.style.display = 'none';
 	audio.src = "";
 	//for(i=0; i < 3; i++){
 	//	console.log(info[i].name);
@@ -130,9 +131,11 @@ function checkAnswer(data) {
 	var attempt = document.getElementById(data).innerHTML
 	if(answer == attempt){
 		document.getElementById('is_correct').innerHTML = "CORRECT";
+		timeraudio.src = "/audio/rightanswer.mp3";
 	}
 	else{
 		document.getElementById('is_correct').innerHTML = "INCORRECT";
+		timeraudio.src = "/audio/wronganswer.mp3";
 	}
 	//console.log(answer)
 	console.log(answer == attempt); 
@@ -147,9 +150,10 @@ function restartGame() {
     document.getElementById('players').innerHTML = "";
 }
 
+
 spin_button.addEventListener('click', () => {
-    socket.emit('spinIsClicked', {
-		stopAt : Math.floor((Math.random() * 359))
+	socket.emit('spinIsClicked', {
+		stopAt: Math.floor((Math.random() * 359))
 
 	});
 })
@@ -158,6 +162,7 @@ socket.on('spinIsClicked', (data) => {
 	stopAt = data.stopAt;
 	startSpin(stopAt);
 });
+
 
 msgform.addEventListener('submit', function (e) {
 	e.preventDefault();
@@ -206,9 +211,11 @@ let theWheel = new Winwheel({
 // -------------------------------------------------------
 function startSpin(stopAt)
 {
+	timeraudio.src = "/audio/spinning wheel.mp3";
 	// Ensure that spinning can't be clicked again while already running.
 	if (wheelSpinning == false) {
 		theWheel.animation.spins = 3;
+		points_display.style.display = 'none';
 		question_display.style.display = 'none';
 		document.getElementById('is_correct').innerHTML = "";
 		// Disable the spin button so can't click again while wheel is spinning.
@@ -251,20 +258,44 @@ function getPoints(indicatedSegment)
 
 function displayQuestion(index)
 {	
+	document.getElementById('buzzbutton').style.display = 'initial';
+	timeraudio.src = "/audio/Countdown.mp3";
+	startTimer();
+	document.getElementById('lengthText').innerHTML = --lengthText.value;
+	socket.emit("setServerGameLength", lengthText.value);
 	points_display.style.display = 'none';
 	question_display.style.display = 'table';
 	var indicatedSegment = theWheel.getIndicatedSegment();
 	document.getElementById('question').innerHTML = indicatedSegment['questions'][index].title;
 	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][index].choices[0];
+	$("choice-one").off('click');
 	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][index].choices[1];
+	$("choice-two").off('click');
 	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][index].choices[2];
+	$("choice-three").off('click');
 	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][index].choices[3];
+	$("choice-four").off('click');
 	document.getElementById('answer').innerHTML = indicatedSegment['questions'][index].answer;
-	
+
+	document.getElementById('buzzbutton').addEventListener('click', () => {
+		buzzbutton.style.display = 'none';
+		buzzinaudio.src = "/audio/buzzin.wav";
+		onTimesUp();
+		timeraudio.src = "/audio/thinkingmusic.mp3";
+	});
+
+	/*
+		Once questions get to zero - end the game (implement code below)
+
+		if (lenthText.value == 0)
+		{
+			end game
+		}
+	*/
 
 	console.log(indicatedSegment['questions']);
-	
-	startTimer();
+
+	resetWheel();
 }
 
 // -------------------------------------------------------
@@ -294,7 +325,10 @@ let timeLeft = TIME_LIMIT;
 let timerInterval = null;
 let remainingPathColor = COLOR_CODES.info.color;
 
-document.getElementById("app").innerHTML = `
+reset();
+
+function reset() {
+	document.getElementById("app").innerHTML = `
 <div class="base-timer">
   <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <g class="base-timer__circle">
@@ -313,29 +347,37 @@ document.getElementById("app").innerHTML = `
     </g>
   </svg>
   <span id="base-timer-label" class="base-timer__label">${formatTime(
-	timeLeft
-)}</span>
+		timeLeft
+	)}</span>
 </div>
 `;
+}
 
 function onTimesUp() {
+	buzzbutton.style.display = 'none';
+	timeraudio.src = "";
 	clearInterval(timerInterval);
+	timeLeft = TIME_LIMIT;
+	reset();
 }
 
 function startTimer() {
 	timeLeft = TIME_LIMIT;
 	timePassed = 0;
+	document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
+	document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
 	timerInterval = setInterval(() => {
-		timePassed = timePassed += 1;
 		timeLeft = TIME_LIMIT - timePassed;
 		document.getElementById("base-timer-label").innerHTML = formatTime(
 			timeLeft
 		);
+		timePassed++;
 		setCircleDasharray();
 		setRemainingPathColor(timeLeft);
 
 		if (timeLeft === 0) {
 			onTimesUp();
+			timeraudio.src = "/audio/timesup.mp3";
 		}
 	}, 1000);
 }

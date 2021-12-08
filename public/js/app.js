@@ -249,6 +249,17 @@ function getQuestions(indicatedSegment)
 		document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
 	});
 
+	document.getElementById('lengthText') = --lengthText.value;
+
+	/*
+		Once questions get to zero - end the game (implement code below)
+
+		if (lenthText == 0)
+		{
+			end game
+		}
+	*/
+
 	console.log(indicatedSegment['questions']);
 
 	resetWheel();

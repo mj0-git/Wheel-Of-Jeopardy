@@ -252,6 +252,22 @@ input[type=text], select {
     }
 }
 
+.glow {
+    color: #fff;
+    text-align: center;
+    animation: glow 1s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+    from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+    }
+
+    to {
+        text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+    }
+}
+
 .buzzbutton {
     animation: glowing 1300ms infinite;
 }
@@ -262,7 +278,7 @@ input[type=text], select {
     width: 100%;
 }
 
-.scorboardScore {
+.scoreboardScore {
     padding: 10px;
     text-align: center;
     width: 100%;
@@ -276,6 +292,18 @@ input[type=text], select {
     font-weight: bold;
     border-bottom: 1px solid #ddd;
     background-color: #1c1c3d;
+}
+
+.playerOneTurn {
+    box-shadow: 0px 80px 40px 10px #0ff;
+}
+
+.playerTwoTurn {
+    box-shadow: 120px 80px 40px 20px #0ff;
+}
+
+.playerThreeTurn {
+    box-shadow: 120px 80px 40px 20px #0ff;
 }
 
 .remainingQuestions {
@@ -302,7 +330,7 @@ input[type=text], select {
     color: #26fa17;
 }
 
-.scorboardScore {
+.scoreboardScore {
     font-size: 2em;
     border-bottom: 1px solid #ddd;
     border-right: 1px solid #ddd;

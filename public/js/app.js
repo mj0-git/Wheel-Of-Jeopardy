@@ -126,9 +126,11 @@ function checkAnswer(data) {
 	var attempt = document.getElementById(data).innerHTML
 	if(answer == attempt){
 		document.getElementById('is_correct').innerHTML = "CORRECT";
+		timeraudio.src = "/audio/rightanswer.mp3";
 	}
 	else{
 		document.getElementById('is_correct').innerHTML = "INCORRECT";
+		timeraudio.src = "/audio/wronganswer.mp3";
 	}
 	//console.log(answer)
 	console.log(answer == attempt); 
@@ -142,9 +144,10 @@ function restartGame() {
     document.getElementById('players').innerHTML = "";
 }
 
+
 spin_button.addEventListener('click', () => {
-    socket.emit('spinIsClicked', {
-		stopAt : Math.floor((Math.random() * 359))
+	socket.emit('spinIsClicked', {
+		stopAt: Math.floor((Math.random() * 359))
 
 	});
 })
@@ -153,6 +156,7 @@ socket.on('spinIsClicked', (data) => {
 	stopAt = data.stopAt;
 	startSpin(stopAt);
 });
+
 
 msgform.addEventListener('submit', function (e) {
 	e.preventDefault();
@@ -201,6 +205,7 @@ let theWheel = new Winwheel({
 // -------------------------------------------------------
 function startSpin(stopAt)
 {
+	timeraudio.src = "/audio/spinning wheel.mp3";
 	// Ensure that spinning can't be clicked again while already running.
 	if (wheelSpinning == false) {
 		theWheel.animation.spins = 3;
@@ -243,6 +248,7 @@ function getQuestions(indicatedSegment)
 		buzzbutton.style.display = 'none';
 		buzzinaudio.src = "/audio/buzzin.wav";
 		onTimesUp();
+		timeraudio.src = "/audio/thinkingmusic.mp3";
 		document.getElementById('question').innerHTML = indicatedSegment['questions'][0].title;
 		document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][0].choices[0];
 		document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][0].choices[1];
@@ -254,7 +260,7 @@ function getQuestions(indicatedSegment)
 	/*
 		Once questions get to zero - end the game (implement code below)
 
-		if (lenthText == 0)
+		if (lenthText.value == 0)
 		{
 			end game
 		}

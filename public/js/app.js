@@ -238,7 +238,7 @@ function getQuestions(indicatedSegment)
 	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][0].choices[2];
 	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][0].choices[3];
 	document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
-	
+	document.getElementById('remainQuest').innerHTML = --lengthText;
 
 	console.log(indicatedSegment['questions']);
 	

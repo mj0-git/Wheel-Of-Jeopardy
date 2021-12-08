@@ -317,6 +317,9 @@ function startTimer() {
 			onTimesUp();
 		}
 	}, 1000);
+	document.getElementById("base-timer-path-remaining").classList.remove(alert.color);
+	document.getElementById("base-timer-path-remaining").classList.add(info.color);
+	document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
 }
 
 function formatTime(time) {
@@ -332,14 +335,7 @@ function formatTime(time) {
 
 function setRemainingPathColor(timeLeft) {
 	const { alert, warning, info } = COLOR_CODES;
-	if (timeLeft > 3) {
-		document
-			.getElementById("base-timer-path-remaining")
-			.classList.remove(alert.color);
-		document
-			.getElementById("base-timer-path-remaining")
-			.classList.add(info.color);
-	} else if (timeLeft <= alert.threshold) {
+	if (timeLeft <= alert.threshold) {
 		document
 			.getElementById("base-timer-path-remaining")
 			.classList.remove(warning.color);

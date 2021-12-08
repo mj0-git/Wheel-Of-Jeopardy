@@ -104,9 +104,14 @@ socket.on('updateWaitingList', (playerNames) => {
 	 updatePlayerList(playerNames);
 });
 
+socket.on('displayQuestion', (data) => {
+	displayQuestion(data);
+	//console.log(data);
+});
+
 socket.on('checkAnswer', (data) => {
 	checkAnswer(data);
-	console.log(data);
+	//console.log(data);
 });
 
 socket.on('restart_game', (data) =>{
@@ -133,6 +138,7 @@ function checkAnswer(data) {
 	console.log(answer == attempt); 
 	console.log(attempt); 
 	console.log("correct");
+	resetWheel();
 }
 
 function restartGame() {
@@ -190,7 +196,7 @@ let theWheel = new Winwheel({
 		'type'     : 'spinToStop',
 		'duration' : 5,     // Duration in seconds.
 		'spins'    : 8,     // Number of complete spins.
-		'callbackFinished' : getQuestions
+		'callbackFinished' : getPoints
 	}
 });
 
@@ -203,6 +209,7 @@ function startSpin(stopAt)
 	// Ensure that spinning can't be clicked again while already running.
 	if (wheelSpinning == false) {
 		theWheel.animation.spins = 3;
+		question_display.style.display = 'none';
 		document.getElementById('is_correct').innerHTML = "";
 		// Disable the spin button so can't click again while wheel is spinning.
 		document.getElementById('spin_button').src       = "images/spin_off.png";
@@ -229,20 +236,34 @@ function resetWheel()
 	wheelSpinning = false;          // Reset to false to power buttons and spin can be clicked again.
 }
 
-
-function getQuestions(indicatedSegment)
+function getPoints(indicatedSegment)
 {	
-	document.getElementById('question').innerHTML = indicatedSegment['questions'][0].title;
-	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][0].choices[0];
-	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][0].choices[1];
-	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][0].choices[2];
-	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][0].choices[3];
-	document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
+	var count = 0;
+
+	for (let value of indicatedSegment['questions']){
+		document.getElementById('point-'+count).innerHTML = value.points;
+		document.getElementById('point-'+count).style.display = 'table-cell';
+		count++;
+	}
+	points_display.style.display = 'table';
+}
+
+
+function displayQuestion(index)
+{	
+	points_display.style.display = 'none';
+	question_display.style.display = 'table';
+	var indicatedSegment = theWheel.getIndicatedSegment();
+	document.getElementById('question').innerHTML = indicatedSegment['questions'][index].title;
+	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][index].choices[0];
+	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][index].choices[1];
+	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][index].choices[2];
+	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][index].choices[3];
+	document.getElementById('answer').innerHTML = indicatedSegment['questions'][index].answer;
 	
 
 	console.log(indicatedSegment['questions']);
 	
-	resetWheel();
 	startTimer();
 }
 

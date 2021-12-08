@@ -240,6 +240,14 @@ function getQuestions(indicatedSegment)
 	document.getElementById('answer').innerHTML = indicatedSegment['questions'][0].answer;
 	document.getElementById('remainQuest').innerHTML = --lengthText.value;
 
+	/*
+	To implement for end game here
+	if (length.value == 0)
+	{
+		end the game
+	}
+	*/
+
 	console.log(indicatedSegment['questions']);
 	
 	resetWheel();

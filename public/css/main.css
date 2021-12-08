@@ -221,7 +221,9 @@ input[type=text], select {
 .buzzbutton {
     background-color: #1c87c9;
     -webkit-border-radius: 60px;
-    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+    border-radius: 80%;
     border: none;
     color: #eeeeee;
     cursor: pointer;

@@ -311,7 +311,7 @@ function startTimer() {
 		document.getElementById("base-timer-label").innerHTML = formatTime(
 			timeLeft
 		);
-		timePassed = timePassed += 1;
+		timePassed++;
 		setCircleDasharray();
 		setRemainingPathColor(timeLeft);
 
@@ -319,8 +319,6 @@ function startTimer() {
 			onTimesUp();
 		}
 	}, 1000);
-	
-	// document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
 }
 
 function formatTime(time) {

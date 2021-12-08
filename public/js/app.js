@@ -232,7 +232,7 @@ function resetWheel()
 
 
 function getQuestions(indicatedSegment)
-{
+{	
 	document.getElementById('buzzbutton').style.display = 'initial';
 	timeraudio.src = "/audio/Countdown.mp3";
 	startTimer();
@@ -250,10 +250,8 @@ function getQuestions(indicatedSegment)
 	});
 
 	console.log(indicatedSegment['questions']);
-	
+
 	resetWheel();
-	//startTimer();
-	//timeraudio.src = "/audio/Countdown.mp3";
 }
 
 // -------------------------------------------------------
@@ -322,12 +320,14 @@ function onTimesUp() {
 function startTimer() {
 	timeLeft = TIME_LIMIT;
 	timePassed = 0;
+	document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
+	document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
 	timerInterval = setInterval(() => {
-		timePassed = timePassed += 1;
 		timeLeft = TIME_LIMIT - timePassed;
 		document.getElementById("base-timer-label").innerHTML = formatTime(
 			timeLeft
 		);
+		timePassed++;
 		setCircleDasharray();
 		setRemainingPathColor(timeLeft);
 

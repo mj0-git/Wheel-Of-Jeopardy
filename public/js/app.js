@@ -235,8 +235,9 @@ function getQuestions(indicatedSegment)
 {	
 	document.getElementById('buzzbutton').style.display = 'initial';
 	timeraudio.src = "/audio/Countdown.mp3";
-	document.getElementById('lengthText') = --lengthText.value;
 	startTimer();
+	document.getElementById('lengthText').innerHTML = --lengthText.value;
+	socket.emit("setServerGameLength", lengthText.value);
 
 	document.getElementById('buzzbutton').addEventListener('click', () => {
 		buzzbutton.style.display = 'none';

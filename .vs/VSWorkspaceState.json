@@ -2,6 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\public",
+    "\\public\\audio",
     "\\public\\css",
     "\\public\\js",
     "\\server"

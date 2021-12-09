@@ -93,10 +93,7 @@ io.on('connection', (socket) => {
     });
 
 	socket.on('click-point', function(index){
-
-		setTimeout(function(){
-			io.emit('displayQuestion', index);
-		}, 3000); 
+		io.emit('displayQuestion', index);
     });
 
 

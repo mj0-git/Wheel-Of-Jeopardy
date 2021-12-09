@@ -107,11 +107,15 @@ socket.on('updateWaitingList', (playerNames) => {
 });
 
 socket.on('displayQuestion', (data) => {
-	displayQuestion(data);
+	disablePoints();
+	setTimeout(function(){
+		displayQuestion(data);
+	}, 3000); 
 	//console.log(data);
 });
 
 socket.on('checkAnswer', (data) => {
+	disableChoices();
 	checkAnswer(data);
 	//console.log(data);
 });
@@ -253,7 +257,56 @@ function getPoints(indicatedSegment)
 		document.getElementById('point-'+count).style.display = 'table-cell';
 		count++;
 	}
+	enablePoints();
 	points_display.style.display = 'table';
+}
+
+function disableChoices(){
+	document.getElementById('choice-one').onclick = null;
+	document.getElementById('choice-one').style.opacity = "0.3";
+	document.getElementById('choice-two').onclick = null;
+	document.getElementById('choice-two').style.opacity = "0.3";
+	document.getElementById('choice-three').onclick = null;
+	document.getElementById('choice-three').style.opacity = "0.3";
+	document.getElementById('choice-four').onclick = null;
+	document.getElementById('choice-four').style.opacity = "0.3";
+}
+
+function enableChoices(){
+	document.getElementById('choice-one').onclick = function(){ socket.emit('click', 'choice-one')};
+	document.getElementById('choice-one').style.opacity = "1";
+	document.getElementById('choice-two').onclick = function(){ socket.emit('click', 'choice-two')};
+	document.getElementById('choice-two').style.opacity = "1";
+	document.getElementById('choice-three').onclick = function(){ socket.emit('click', 'choice-three')};
+	document.getElementById('choice-three').style.opacity = "1";
+	document.getElementById('choice-four').onclick = function(){ socket.emit('click', 'choice-four')};
+	document.getElementById('choice-four').style.opacity = "1";
+}
+
+function disablePoints(){
+	document.getElementById('point-0').onclick = null;
+	document.getElementById('point-0').style.opacity = "0.3";
+	document.getElementById('point-1').onclick = null;
+	document.getElementById('point-1').style.opacity = "0.3";
+	document.getElementById('point-2').onclick = null;
+	document.getElementById('point-2').style.opacity = "0.3";
+	document.getElementById('point-3').onclick = null;
+	document.getElementById('point-3').style.opacity = "0.3";
+	document.getElementById('point-4').onclick = null;
+	document.getElementById('point-4').style.opacity = "0.3";
+}
+
+function enablePoints(){
+	document.getElementById('point-0').onclick = function(){ socket.emit('click-point', '0')};
+	document.getElementById('point-0').style.opacity = "1";
+	document.getElementById('point-1').onclick = function(){ socket.emit('click-point', '1')};
+	document.getElementById('point-1').style.opacity = "1";
+	document.getElementById('point-2').onclick = function(){ socket.emit('click-point', '2')};
+	document.getElementById('point-2').style.opacity = "1";
+	document.getElementById('point-3').onclick = function(){ socket.emit('click-point', '3')};
+	document.getElementById('point-3').style.opacity = "1";
+	document.getElementById('point-4').onclick = function(){ socket.emit('click-point', '4')};
+	document.getElementById('point-4').style.opacity = "1";
 }
 
 
@@ -267,20 +320,22 @@ function displayQuestion(index)
 	points_display.style.display = 'none';
 	question_display.style.display = 'table';
 	var indicatedSegment = theWheel.getIndicatedSegment();
+
 	document.getElementById('question').innerHTML = indicatedSegment['questions'][index].title;
 	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][index].choices[0];
-	$("choice-one").off('click');
 	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][index].choices[1];
-	$("choice-two").off('click');
 	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][index].choices[2];
-	$("choice-three").off('click');
 	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][index].choices[3];
-	$("choice-four").off('click');
+
+	disableChoices();
+	//
+
 	document.getElementById('answer').innerHTML = indicatedSegment['questions'][index].answer;
 
 	document.getElementById('buzzbutton').addEventListener('click', () => {
 		buzzbutton.style.display = 'none';
 		buzzinaudio.src = "/audio/buzzin.wav";
+		enableChoices();
 		onTimesUp();
 		timeraudio.src = "/audio/thinkingmusic.mp3";
 		displayCurrent(1); // find out which player clicked the buzz in and highlight them ** Not fully functioning yet **

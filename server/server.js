@@ -88,12 +88,16 @@ io.on('connection', (socket) => {
 		performDisconnect(socket, rejoin=false);
 	});
 
-	socket.on('click', function(index){
-        io.emit('checkAnswer', index);
+	socket.on('click', function(data){
+        io.emit('checkAnswer', data);
     });
 
-	socket.on('click-point', function(index){
-		io.emit('displayQuestion', index);
+	socket.on('click-point', function(data){
+		io.emit('displayQuestion', data);
+    });
+
+	socket.on('decrementQCounter', function(data){
+		io.emit('decrementQuestions', data);
     });
 
 

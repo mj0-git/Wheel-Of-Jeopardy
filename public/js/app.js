@@ -76,6 +76,7 @@ socket.on('joinGame', (info) => {
 	scoreboard.style.display = 'grid';
 	buzzbutton.style.display = 'none';
 	audio.src = "";
+	displayCurrent(0);
 	//for(i=0; i < 3; i++){
 	//	console.log(info[i].name);
 	//}
@@ -365,6 +366,7 @@ function displayQuestion(index)
 		enableChoices();
 		onTimesUp();
 		timeraudio.src = "/audio/thinkingmusic.mp3";
+		displayCurrent(1); // find out which player clicked the buzz in and highlight them ** Not fully functioning yet **
 	});
 
 	/*
@@ -392,6 +394,33 @@ function removeQuestion(indicatedSegment, index){
 	var counter = document.getElementById('remainQuest').innerHTML;
 	counter = counter - 1;
 	socket.emit("decrementQCounter", counter); //Decrement Question Counter
+}
+
+function displayCurrent(currentNum) {
+	if (currentNum == 0) {
+		document.getElementById('player-one').classList.add('playerOneTurn');
+		document.getElementById('player-one').classList.add('glow');
+		document.getElementById('player-two').classList.remove('playerTwoTurn');
+		document.getElementById('player-two').classList.remove('glow');
+		document.getElementById('player-three').classList.remove('playerThreeTurn');
+		document.getElementById('player-three').classList.remove('glow');
+	}
+	if (currentNum == 1) {
+		document.getElementById('player-one').classList.remove('playerOneTurn');
+		document.getElementById('player-one').classList.remove('glow');
+		document.getElementById('player-two').classList.add('playerTwoTurn');
+		document.getElementById('player-two').classList.add('glow');
+		document.getElementById('player-three').classList.remove('playerThreeTurn');
+		document.getElementById('player-three').classList.remove('glow');
+	}
+	if (currentNum == 2) {
+		document.getElementById('player-one').classList.remove('playerOneTurn');
+		document.getElementById('player-one').classList.remove('glow');
+		document.getElementById('player-two').classList.remove('playerTwoTurn');
+		document.getElementById('player-two').classList.remove('glow');
+		document.getElementById('player-three').classList.add('playerThreeTurn');
+		document.getElementById('player-three').classList.add('glow');
+	}
 }
 
 // -------------------------------------------------------

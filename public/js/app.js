@@ -19,7 +19,6 @@ let score3 = document.getElementById('score-three');
  
 
 
-nameForm.addEventListener('submit', sendGotNameMessage);
 
 
 
@@ -28,6 +27,8 @@ function sendGotNameMessage(e) {
 	e.preventDefault();
 	socket.emit('gotName', nameInput.value);
 	nameForm.style.display = 'none';
+	nameForm.disabled = "true";
+	nameForm.removeEventListener('submit', sendGotNameMessage);
 	nameInput.value = "";
     login.style.display = 'none';
     before_game.style.display = 'table'
@@ -48,7 +49,9 @@ function updatePlayerList(names) {
 
 socket.on('connect', () => {
 	playerListDiv.style.display = 'none';
+	//show the name entry form and add a submission listener
 	nameForm.style.display = 'block';
+	nameForm.addEventListener('submit', sendGotNameMessage);
 	playerListHeading.innerText = "Connected Players";
 });
 
@@ -61,10 +64,11 @@ socket.on('setGameLength', () => {
 		if (lengthText.value <= 30) {
 			document.getElementById('lengthButton').style.display = 'initial';
 			document.getElementById('remainQuest').innerHTML = lengthText.value;
-			socket.emit("setServerGameLength", lengthText.value);
 			document.getElementById('valueError').style.display = 'none';
-			document.getElementById('lengthButton').addEventListener('click', () => {
+			document.getElementById('lengthButton').addEventListener('click', e => {
+				socket.emit("setServerGameLength", lengthText.value);
 				gameLength.style.display = 'none';
+				e.preventDefault();
 			});
 		} else {
 			document.getElementById('lengthButton').style.display = 'none';
@@ -106,6 +110,7 @@ socket.on('renderWheel', (info) => {
 	theWheelData = info.wheel;
 	numQuestions = info.numQuestions;
 	document.getElementById('remainQuest').innerHTML = numQuestions;
+	console.log("render wheel");
 	for(i=1; i <=5; i++){
 		theWheel['segments'][i]['text'] = theWheelData[i].name;
 		theWheel['segments'][i]['questions'] = theWheelData[i].questions;
@@ -122,22 +127,24 @@ socket.on('updateWaitingList', (playerNames) => {
 socket.on('displayQuestion', (data) => {
 	disablePoints();
 	setTimeout(function(){
-		displayQuestion(data);
+		displayQuestion(parseInt(data));
 	}, 3000); 
-	//console.log(data);
 });
 
 socket.on('checkAnswer', (data) => {
 	disableChoices();
 	var isCorrect = checkAnswer(data.choice);
 	if (socket.id == data.id) {
-		if (isCorrect) {
+		if (isCorrect == true) {
 			socket.emit('iscorrect', {"player": data.id});
-		} else if (!isCorrect) {
+		} else if (isCorrect == false) {
 			socket.emit('isincorrect', {"player": data.id});
 		}	
 	}
-	//console.log(data);
+});
+
+socket.on('decrementQuestions', (data) => {
+	document.getElementById('remainQuest').innerHTML = data;
 });
 
 socket.on('restart_game', (data) =>{
@@ -152,26 +159,45 @@ socket.on('restart_game', (data) =>{
 });
 
 function checkAnswer(data) {
-	var answer = document.getElementById('answer').innerHTML
-	var attempt = document.getElementById(data).innerHTML
-	var correctBool = false;
-	if(answer == attempt){
-		document.getElementById('is_correct').innerHTML = "CORRECT";
-		timeraudio.src = "/audio/rightanswer.mp3";
-		correctBool = true;
+	var correctBool = null;
+	var answer = document.getElementById('answer').innerHTML;
+	var correct_index = -1;
+	// Find index of correct choice
+	for (x=1; x<=4;x++){
+		if(document.getElementById('choice-'+x).innerHTML == answer){
+			correct_index = x;
+			break;
+		}
 	}
+	// Check if buzzed
+	if (data != null){
+		var attempt = document.getElementById(data).innerHTML;
+		if(answer == attempt){
+			correctBool = true;
+			document.getElementById(data).style.backgroundColor = "green";
+			document.getElementById('is_correct').innerHTML = "CORRECT!!";
+			timeraudio.src = "/audio/rightanswer.mp3";
+		}
+		else{
+			correctBool = false;
+			document.getElementById(data).style.backgroundColor = "red";
+			document.getElementById('choice-'+correct_index).style.backgroundColor = "green";
+			document.getElementById('is_correct').innerHTML = "INCORRECT!!";
+			timeraudio.src = "/audio/wronganswer.mp3";
+		}
+	}
+	// Show answer if no buzz
 	else{
-		document.getElementById('is_correct').innerHTML = "INCORRECT";
-		timeraudio.src = "/audio/wronganswer.mp3";
+		document.getElementById('choice-'+correct_index).style.backgroundColor = "green";
+		document.getElementById('is_correct').innerHTML = "NO BUZZ DETECTED!!";
 	}
-	//console.log(answer)
-	console.log(answer == attempt); 
-	console.log(attempt); 
-	console.log("correct");
+
+	//Enable spin
 	resetWheel();
 	return correctBool;
 	
 }
+
 
 function restartGame() {
     playerListHeading.innerText = "Connected Players";
@@ -230,7 +256,7 @@ let theWheel = new Winwheel({
 		'type'     : 'spinToStop',
 		'duration' : 5,     // Duration in seconds.
 		'spins'    : 8,     // Number of complete spins.
-		'callbackFinished' : getPoints
+		'callbackFinished' : displayPoints
 	}
 });
 
@@ -266,71 +292,77 @@ function resetWheel()
 {
 	theWheel.stopAnimation(false);  // Stop the animation, false as param so does not call callback function.
 	theWheel.rotationAngle = 0;     // Re-set the wheel angle to 0 degrees.
-	//theWheel.draw();                // Call draw to render changes to the wheel.
 	document.getElementById('spin_button').src = "images/spin_on.png";
 	document.getElementById('spin_button').className = "clickable";
 	wheelSpinning = false;          // Reset to false to power buttons and spin can be clicked again.
 }
 
-function getPoints(indicatedSegment)
+function displayPoints(indicatedSegment)
 {	
 	var count = 0;
 
+	// Populate Points
 	for (let value of indicatedSegment['questions']){
+		console.log(value.points);
 		document.getElementById('point-'+count).innerHTML = value.points;
 		document.getElementById('point-'+count).style.display = 'table-cell';
 		count++;
 	}
+	
+	// Hide Points for deleted questions
+	var remaining_q = indicatedSegment['questions'].length;
+	var numDeleted = 5 - remaining_q;
+	console.log(indicatedSegment['questions']);
+	if (numDeleted > 0){
+		for(x=4;x >= remaining_q; x--){
+			document.getElementById('point-'+x).innerHTML = "";
+			document.getElementById('point-'+x).style.display = 'none';
+		}
+	}
+
 	enablePoints();
 	points_display.style.display = 'table';
 }
 
 function disableChoices(){
-	document.getElementById('choice-one').onclick = null;
-	document.getElementById('choice-one').style.opacity = "0.3";
-	document.getElementById('choice-two').onclick = null;
-	document.getElementById('choice-two').style.opacity = "0.3";
-	document.getElementById('choice-three').onclick = null;
-	document.getElementById('choice-three').style.opacity = "0.3";
-	document.getElementById('choice-four').onclick = null;
-	document.getElementById('choice-four').style.opacity = "0.3";
+
+	for(x=1;x<=4;x++){
+		document.getElementById('choice-'+x).onclick = null;
+		document.getElementById('choice-'+x).style.opacity = "0.3";
+		document.getElementById('choice-'+x).style.backgroundColor = "#FFFFE0";
+	}
 }
 
 function enableChoices(){
-	document.getElementById('choice-one').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-one'})};
-	document.getElementById('choice-one').style.opacity = "1";
-	document.getElementById('choice-two').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-two'})};
-	document.getElementById('choice-two').style.opacity = "1";
-	document.getElementById('choice-three').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-three'})};
-	document.getElementById('choice-three').style.opacity = "1";
-	document.getElementById('choice-four').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-four'})};
-	document.getElementById('choice-four').style.opacity = "1";
+
+	for(x=1;x<=4;x++){
+		document.getElementById('choice-'+x).style.opacity = "1";
+		document.getElementById('choice-'+x).style.backgroundColor = "#FFFFE0";
+	}
+	document.getElementById('choice-1').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-1'})};
+	document.getElementById('choice-2').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-2'})};
+	document.getElementById('choice-3').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-3'})};
+	document.getElementById('choice-4').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-4'})};
 }
 
 function disablePoints(){
-	document.getElementById('point-0').onclick = null;
-	document.getElementById('point-0').style.opacity = "0.3";
-	document.getElementById('point-1').onclick = null;
-	document.getElementById('point-1').style.opacity = "0.3";
-	document.getElementById('point-2').onclick = null;
-	document.getElementById('point-2').style.opacity = "0.3";
-	document.getElementById('point-3').onclick = null;
-	document.getElementById('point-3').style.opacity = "0.3";
-	document.getElementById('point-4').onclick = null;
-	document.getElementById('point-4').style.opacity = "0.3";
+
+	for(x=0;x<=4;x++){
+		document.getElementById('point-'+x).onclick = null;
+		document.getElementById('point-'+x).style.opacity = "0.3";
+	}
 }
 
 function enablePoints(){
+
+	for(x=0;x<=4;x++){
+		document.getElementById('point-'+x).style.opacity = "1";
+	}
 	document.getElementById('point-0').onclick = function(){ socket.emit('click-point', '0')};
-	document.getElementById('point-0').style.opacity = "1";
 	document.getElementById('point-1').onclick = function(){ socket.emit('click-point', '1')};
-	document.getElementById('point-1').style.opacity = "1";
 	document.getElementById('point-2').onclick = function(){ socket.emit('click-point', '2')};
-	document.getElementById('point-2').style.opacity = "1";
 	document.getElementById('point-3').onclick = function(){ socket.emit('click-point', '3')};
-	document.getElementById('point-3').style.opacity = "1";
 	document.getElementById('point-4').onclick = function(){ socket.emit('click-point', '4')};
-	document.getElementById('point-4').style.opacity = "1";
 }
 
 
@@ -339,21 +371,21 @@ function displayQuestion(index)
 	document.getElementById('buzzbutton').style.display = 'initial';
 	timeraudio.src = "/audio/Countdown.mp3";
 	startTimer();
-	document.getElementById('lengthText').innerHTML = --lengthText.value;
-	socket.emit("setServerGameLength", lengthText.value);
+
 	points_display.style.display = 'none';
 	question_display.style.display = 'table';
 	var indicatedSegment = theWheel.getIndicatedSegment();
 	document.getElementById('question').innerHTML = indicatedSegment['questions'][index].title;
-	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][index].choices[0];
-	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][index].choices[1];
-	document.getElementById('choice-three').innerHTML = indicatedSegment['questions'][index].choices[2];
-	document.getElementById('choice-four').innerHTML = indicatedSegment['questions'][index].choices[3];
-
-	disableChoices();
-	//
-
+	document.getElementById('choice-1').innerHTML = indicatedSegment['questions'][index].choices[0];
+	document.getElementById('choice-2').innerHTML = indicatedSegment['questions'][index].choices[1];
+	document.getElementById('choice-3').innerHTML = indicatedSegment['questions'][index].choices[2];
+	document.getElementById('choice-4').innerHTML = indicatedSegment['questions'][index].choices[3];
 	document.getElementById('answer').innerHTML = indicatedSegment['questions'][index].answer;
+	document.getElementById('points').innerHTML = indicatedSegment['questions'][index].points;
+	disableChoices();
+
+	// Delete question/category
+	removeQuestion(indicatedSegment, index);
 
 	document.getElementById('buzzbutton').addEventListener('click', () => {
 		buzzbutton.style.display = 'none';
@@ -372,10 +404,23 @@ function displayQuestion(index)
 			end game
 		}
 	*/
+}
 
-	console.log(indicatedSegment['questions']);
-
-	resetWheel();
+function removeQuestion(indicatedSegment, index){
+	eg_index = theWheel['segments'].indexOf(indicatedSegment);
+	var questions = theWheel['segments'][eg_index]['questions'];
+	questions.splice(index,1);
+	if (questions.length == 0){
+		theWheel.deleteSegment(eg_index);
+		theWheel.draw();
+	}
+	else{
+		theWheel['segments'][eg_index]['questions'] = questions;
+	}
+	
+	var counter = document.getElementById('remainQuest').innerHTML;
+	counter = counter - 1;
+	socket.emit("decrementQCounter", counter); //Decrement Question Counter
 }
 
 function displayCurrent(currentNum) {
@@ -462,10 +507,13 @@ function reset() {
 
 function onTimesUp() {
 	buzzbutton.style.display = 'none';
+	//Show Answer if no buzz
+	//checkAnswer(null);
 	timeraudio.src = "";
 	clearInterval(timerInterval);
 	timeLeft = TIME_LIMIT;
 	reset();
+	
 }
 
 function startTimer() {

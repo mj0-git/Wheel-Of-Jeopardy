@@ -97,7 +97,10 @@ io.on('connection', (socket) => {
 		var gameId = playerData[socket.id].getGameId();
 		gameData[gameId].setQuestionPointChoice(index);
 		io.to(gameId).emit('displayQuestion', index);
+	});
 
+	socket.on('decrementQCounter', function(data){
+		io.emit('decrementQuestions', data);
     });
 
 	socket.on('iscorrect', (data) => {

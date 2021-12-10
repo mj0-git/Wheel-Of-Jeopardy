@@ -13,6 +13,11 @@ let temp_correct = null;
 let messages = document.getElementById('messages');
 let msgform = document.getElementById('message');
 let input = document.getElementById('input');
+let score1 = document.getElementById('score-one');
+let score2 = document.getElementById('score-two');
+let score3 = document.getElementById('score-three');
+ 
+
 
 nameForm.addEventListener('submit', sendGotNameMessage);
 
@@ -89,6 +94,14 @@ socket.on('joinGame', (info) => {
 	//playerListDiv.style.display = 'none';
 });
 
+socket.on('updateScore', (info) => {
+     
+    document.getElementById('score-one').innerHTML = info.s[0];
+    document.getElementById('score-two').innerHTML = info.s[1];
+    document.getElementById('score-three').innerHTML = info.s[2];
+});
+
+
 socket.on('renderWheel', (info) => {
 	theWheelData = info.wheel;
 	numQuestions = info.numQuestions;
@@ -116,7 +129,14 @@ socket.on('displayQuestion', (data) => {
 
 socket.on('checkAnswer', (data) => {
 	disableChoices();
-	checkAnswer(data);
+	var isCorrect = checkAnswer(data.choice);
+	if (socket.id == data.id) {
+		if (isCorrect) {
+			socket.emit('iscorrect', {"player": data.id});
+		} else if (!isCorrect) {
+			socket.emit('isincorrect', {"player": data.id});
+		}	
+	}
 	//console.log(data);
 });
 
@@ -134,9 +154,11 @@ socket.on('restart_game', (data) =>{
 function checkAnswer(data) {
 	var answer = document.getElementById('answer').innerHTML
 	var attempt = document.getElementById(data).innerHTML
+	var correctBool = false;
 	if(answer == attempt){
 		document.getElementById('is_correct').innerHTML = "CORRECT";
 		timeraudio.src = "/audio/rightanswer.mp3";
+		correctBool = true;
 	}
 	else{
 		document.getElementById('is_correct').innerHTML = "INCORRECT";
@@ -147,6 +169,8 @@ function checkAnswer(data) {
 	console.log(attempt); 
 	console.log("correct");
 	resetWheel();
+	return correctBool;
+	
 }
 
 function restartGame() {
@@ -273,13 +297,13 @@ function disableChoices(){
 }
 
 function enableChoices(){
-	document.getElementById('choice-one').onclick = function(){ socket.emit('click', 'choice-one')};
+	document.getElementById('choice-one').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-one'})};
 	document.getElementById('choice-one').style.opacity = "1";
-	document.getElementById('choice-two').onclick = function(){ socket.emit('click', 'choice-two')};
+	document.getElementById('choice-two').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-two'})};
 	document.getElementById('choice-two').style.opacity = "1";
-	document.getElementById('choice-three').onclick = function(){ socket.emit('click', 'choice-three')};
+	document.getElementById('choice-three').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-three'})};
 	document.getElementById('choice-three').style.opacity = "1";
-	document.getElementById('choice-four').onclick = function(){ socket.emit('click', 'choice-four')};
+	document.getElementById('choice-four').onclick = function(){ socket.emit('click', {"id":socket.id,"choice":'choice-four'})};
 	document.getElementById('choice-four').style.opacity = "1";
 }
 
@@ -320,7 +344,6 @@ function displayQuestion(index)
 	points_display.style.display = 'none';
 	question_display.style.display = 'table';
 	var indicatedSegment = theWheel.getIndicatedSegment();
-
 	document.getElementById('question').innerHTML = indicatedSegment['questions'][index].title;
 	document.getElementById('choice-one').innerHTML = indicatedSegment['questions'][index].choices[0];
 	document.getElementById('choice-two').innerHTML = indicatedSegment['questions'][index].choices[1];

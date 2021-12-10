@@ -89,13 +89,43 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('click', function(index){
-        io.emit('checkAnswer', index);
+		var gameId = playerData[socket.id].getGameId();
+        io.to(gameId).emit('checkAnswer', index);
     });
 
 	socket.on('click-point', function(index){
-		io.emit('displayQuestion', index);
+		var gameId = playerData[socket.id].getGameId();
+		gameData[gameId].setQuestionPointChoice(index);
+		io.to(gameId).emit('displayQuestion', index);
+
     });
 
+	socket.on('iscorrect', (data) => {
+               var gameId = playerData[socket.id].getGameId();
+               var points = gameData[gameId].getQuestionPointChoice();
+			   console.log("Points " + points);
+			   playerData[data.player].increaseScore(points);
+               info = []
+               gameData[gameId].getPlayers().forEach((player) => { 
+               if (player != socket.id){
+                       info.push(playerData[player].getScore());
+                       }
+               });
+               io.to(gameId).emit('updateScore',{"s":info});
+       });
+
+    socket.on('isincorrect', (data) => {
+               var gameId = playerData[socket.id].getGameId();
+               var points = gameData[gameId].getQuestionPointChoice();
+               playerData[data.player].decreaseScore(points);
+               info = []
+               gameData[gameId].getPlayers().forEach((player) => { 
+               if (player != socket.id){
+                       info.push(playerData[player].getScore());
+                       }
+               });
+               io.to(gameId).emit('updateScore',{"s":info});
+       });
 
 });
 

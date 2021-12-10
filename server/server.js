@@ -11,6 +11,9 @@ let app = express();
 let server = http.createServer(app);
 let io = socketIO(server);
 let Category = require('../models/category.js');
+var p1;
+var p2;
+var p3;
 
 app.use(express.static(publicPath));
 
@@ -100,6 +103,14 @@ io.on('connection', (socket) => {
 		io.emit('decrementQuestions', data);
     });
 
+	socket.on('displaybuzzers', () => {
+		enableBuzzers();
+	});
+
+	socket.on('hidebuzzers', (index) => {
+		var gameId = playerData[socket.id].getGameId();
+		io.to(gameId).emit('disableallbuzzers', index);
+	});
 
 });
 
@@ -191,5 +202,14 @@ function createGameInstance(socket){
 	let hostID = gameData[gameId].getPlayers()[0];
 	playerData[hostID].setHost();
 	io.to(hostID).emit('setGameLength');
+	p1 = gameData[gameId].getPlayers()[0];
+	p2 = gameData[gameId].getPlayers()[1];
+	p3 = gameData[gameId].getPlayers()[2];
+
 }
 
+function enableBuzzers() {
+	io.to(p1).emit('buzz1enable');
+	io.to(p2).emit('buzz2enable');
+	io.to(p3).emit('buzz3enable');
+}

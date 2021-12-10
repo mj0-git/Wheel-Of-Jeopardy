@@ -74,7 +74,9 @@ socket.on('joinGame', (info) => {
 	before_game.style.display = 'none';
 	start_game.style.display = 'table';
 	scoreboard.style.display = 'grid';
-	buzzbutton.style.display = 'none';
+	buzzbutton1.style.display = 'none';
+	buzzbutton2.style.display = 'none';
+	buzzbutton3.style.display = 'none';
 	audio.src = "";
 	displayCurrent(0);
 	//for(i=0; i < 3; i++){
@@ -337,10 +339,35 @@ function enablePoints(){
 	document.getElementById('point-4').onclick = function(){ socket.emit('click-point', '4')};
 }
 
+socket.on('buzz1enable', () => {
+	document.getElementById('buzzbutton1').style.display = 'initial';
+	document.getElementById('buzzbutton1').disabled = false;
+});
+
+socket.on('buzz2enable', () => {
+	document.getElementById('buzzbutton2').style.display = 'initial';
+	document.getElementById('buzzbutton2').disabled = false;
+});
+
+socket.on('buzz3enable', () => {
+	document.getElementById('buzzbutton3').style.display = 'initial';
+	document.getElementById('buzzbutton3').disabled = false;
+});
+
+socket.on('disableallbuzzers', (index) => {
+	document.getElementById('buzzbutton1').style.display = 'none';
+	document.getElementById('buzzbutton1').disabled = true;
+	document.getElementById('buzzbutton2').style.display = 'none';
+	document.getElementById('buzzbutton2').disabled = true;
+	document.getElementById('buzzbutton3').style.display = 'none';
+	document.getElementById('buzzbutton3').disabled = true;
+	displayCurrent(index);
+	onTimesUp();
+});
 
 function displayQuestion(index)
 {	
-	document.getElementById('buzzbutton').style.display = 'initial';
+	socket.emit('displaybuzzers');
 	timeraudio.src = "/audio/Countdown.mp3";
 	startTimer();
 
@@ -360,14 +387,7 @@ function displayQuestion(index)
 	// Delete question/category
 	removeQuestion(indicatedSegment, index);
 
-	document.getElementById('buzzbutton').addEventListener('click', () => {
-		buzzbutton.style.display = 'none';
-		buzzinaudio.src = "/audio/buzzin.wav";
-		enableChoices();
-		onTimesUp();
-		timeraudio.src = "/audio/thinkingmusic.mp3";
-		displayCurrent(1); // find out which player clicked the buzz in and highlight them ** Not fully functioning yet **
-	});
+	buzzin();
 
 	/*
 		Once questions get to zero - end the game (implement code below)
@@ -394,6 +414,30 @@ function removeQuestion(indicatedSegment, index){
 	var counter = document.getElementById('remainQuest').innerHTML;
 	counter = counter - 1;
 	socket.emit("decrementQCounter", counter); //Decrement Question Counter
+}
+
+function buzzin() {
+	document.getElementById('buzzbutton1').onclick = function () {
+		buzzinaudio.src = "/audio/buzzin.wav";
+		enableChoices();
+		timeraudio.src = "/audio/thinkingmusic.mp3";
+		socket.emit('hidebuzzers', 0);
+	};
+
+	document.getElementById('buzzbutton2').onclick = function () {
+		buzzinaudio.src = "/audio/buzzin.wav";
+		enableChoices();
+		timeraudio.src = "/audio/thinkingmusic.mp3";
+		socket.emit('hidebuzzers', 1);
+	};
+
+	document.getElementById('buzzbutton3').onclick = function () {
+		buzzinaudio.src = "/audio/buzzin.wav";
+		enableChoices();
+		timeraudio.src = "/audio/thinkingmusic.mp3";
+		socket.emit('hidebuzzers', 2);
+	};
+
 }
 
 function displayCurrent(currentNum) {

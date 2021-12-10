@@ -355,15 +355,20 @@ socket.on('buzz3enable', () => {
 });
 
 socket.on('disableallbuzzers', (index) => {
+	clearBuzzers();
+	displayCurrent(index);
+	onTimesUp();
+});
+
+function clearBuzzers() {
 	document.getElementById('buzzbutton1').style.display = 'none';
 	document.getElementById('buzzbutton1').disabled = true;
 	document.getElementById('buzzbutton2').style.display = 'none';
 	document.getElementById('buzzbutton2').disabled = true;
 	document.getElementById('buzzbutton3').style.display = 'none';
 	document.getElementById('buzzbutton3').disabled = true;
-	displayCurrent(index);
-	onTimesUp();
-});
+}
+
 
 function displayQuestion(index)
 {	
@@ -523,14 +528,13 @@ function reset() {
 }
 
 function onTimesUp() {
-	buzzbutton.style.display = 'none';
 	//Show Answer if no buzz
 	//checkAnswer(null);
 	timeraudio.src = "";
 	clearInterval(timerInterval);
 	timeLeft = TIME_LIMIT;
 	reset();
-	
+	clearBuzzers();
 }
 
 function startTimer() {

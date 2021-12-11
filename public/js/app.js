@@ -35,6 +35,16 @@ function sendGotNameMessage(e) {
     before_game.style.display = 'table'
 }
 
+// hide scoreboard, points display, question text, etc
+function restartGame(){
+	points_display.style.display = 'none';
+	question_display.style.display = 'none';
+    before_game.style.display = 'none';
+	gameLength.style.display = 'none';
+	scoreboard.style.display = 'none';
+}
+
+
 // update list on client with player names who are waiting
 function updatePlayerList(names) {
 
@@ -48,6 +58,21 @@ function updatePlayerList(names) {
 
 }
 
+// this is called if a player wanted to play again. they go to the waiting room
+socket.on('waiting_room', (data) => {
+	restartGame();
+    playerListHeading.innerText = "Connected Players";
+    playerListDiv.style.display = 'block';
+	nameForm.style.display = 'none';
+	nameForm.disabled = "true";
+	nameForm.removeEventListener('submit', sendGotNameMessage);
+	nameInput.value = "";
+    login.style.display = 'none';
+    before_game.style.display = 'table'
+	alert(data);
+});
+
+//on connection show the name form
 socket.on('connect', () => {
 	playerListDiv.style.display = 'none';
 	//show the name entry form and add a submission listener
@@ -56,6 +81,7 @@ socket.on('connect', () => {
 	playerListHeading.innerText = "Connected Players";
 });
 
+//shows modal with field for user to enter number of game questions
 socket.on('setGameLength', () => {
 	//TODO display text field to get num questions
 	//event listener on text field should emit game length
@@ -102,6 +128,15 @@ socket.on('joinGame', (info) => {
 	//playerListDiv.style.display = 'none';
 });
 
+// function to prevent users from doing things if the winner modal is going to be displayed (game over)
+socket.on('endGame', () => {
+	document.getElementById('spin_button').src       = "images/spin_off.png";
+	document.getElementById('spin_button').className = "";
+	resetWheel();
+	disablePoints();
+	disableChoices();
+});
+
 // Update data shown for player scores
 socket.on('displayScore', (info) => {
      
@@ -113,7 +148,7 @@ socket.on('displayScore', (info) => {
 	socket.emit('nextTurn', document.getElementById('remainQuest').innerHTML);
 });
 
-
+//set up the wheel before first turn
 socket.on('renderWheel', (info) => {
 	theWheelData = info.wheel;
 	numQuestions = info.numQuestions;
@@ -126,6 +161,30 @@ socket.on('renderWheel', (info) => {
 	
 	theWheel.draw(); 
 	resetWheel();
+	//tells server to start the next turn, passes num questions remaining
+	socket.emit('nextTurn', document.getElementById('remainQuest').innerHTML);
+});
+
+//this is called by server to begin the next turn. spin is enabled for the current player
+socket.on('startNextTurn', (currPlayerSocketId) => {
+	if (socket.id == currPlayerSocketId){
+	    document.getElementById('spin_button').src = "images/spin_on.png";
+		document.getElementById('spin_button').className = "clickable";
+	} else {
+
+		// Disable the spin button so can't click again while wheel is spinning.
+		document.getElementById('spin_button').src       = "images/spin_off.png";
+		document.getElementById('spin_button').className = "";
+	}
+});
+
+//this is called by server after the spin is done to let current user select point value
+socket.on('enablePoints', (currPlayerSocketId) => {
+	if (socket.id == currPlayerSocketId){
+		enablePoints();
+	} else {
+		disablePoints();
+	} 
 });
 
 // Update data shown for who is waiting
@@ -133,6 +192,7 @@ socket.on('updateWaitingList', (playerNames) => {
 	 updatePlayerList(playerNames);
 });
 
+//display question data after 3 seconds
 socket.on('displayQuestion', (data) => {
 	disablePoints();
 	setTimeout(function(){
@@ -143,41 +203,49 @@ socket.on('displayQuestion', (data) => {
 // Check whether answer was correct or incorrect
 socket.on('checkAnswer', (data) => {
 	disableChoices();
+	//check if answer was correct
 	var isCorrect = checkAnswer(data.choice);
 	
-	//send message to server to update player scores
+	//get how many points the question was worth
 	var pointsAtStake = parseInt(document.getElementById('points').innerHTML);
+
+	//no one buzzed in, continue to the next turn
 	if (isCorrect == null) {
 		console.log('No buzz in, going to next turn');
 		socket.emit('nextTurn', document.getElementById('remainQuest').innerHTML);
+	//someone buzzed in and chose an answer...update their score
 	} else if (socket.id == data.id) {
 		if (isCorrect == true) {
 			//player was correct
 			console.log('Send msg to server to add ' + data.id + ' score by ' + pointsAtStake);
 			socket.emit('adjustScore', {"correct": true, "player": data.id, "points": pointsAtStake});
-			
 		} else if (isCorrect == false) {
 			//player was incorrect
 			console.log('Send msg to server to subtract ' + data.id + ' score by ' + pointsAtStake);
 			socket.emit('adjustScore', {"correct":false, "player": data.id, "points": pointsAtStake});
+			//don't update current player if they didn't guess correctly
 		}
 
 	}
 });
 
+//update remaining questions display
 socket.on('decrementQuestions', (data) => {
 	console.log('Setting questions remaining to ' + data);
 	document.getElementById('remainQuest').innerHTML = data;
 });
 
+//show the winner modal
 socket.on('showWinner', (data) => {
 	var winnerMsg = '';
-	if (data.length == 1){
-		winnerMsg = 'Congratulations, ' + data[0] + ' won the game!';
-	} else if (data.length == 2) {
-		winnerMsg = 'There was a tie! ' + data[0] + ' and ' + data[1] + ' won the game!';
-	} else if (data.length === 3){
-		winnerMsg = 'There was a tie! ' + data[0] + ', ' + data[1] + ', and ' + data[2] + ' won the game!';
+	//different message based on if there were ties
+	//data[0] is the score
+	if (data.length == 2){
+		winnerMsg = 'Congratulations, ' + data[1] + ' won the game with a score of ' + data[0];
+	} else if (data.length == 3) {
+		winnerMsg = 'There was a tie! ' + data[1] + ' and ' + data[2] + ' won (score of ' + data[0] + ')';
+	} else if (data.length === 4){
+		winnerMsg = 'There was a tie! ' + data[1] + ', ' + data[2] + ', and ' + data[3] + ' won (score of ' + data[0] + ')';
 	} else {
 		winnerMsg = 'Uh oh, we could not choose a winner';
 	} 
@@ -185,30 +253,34 @@ socket.on('showWinner', (data) => {
 	endGame.style.display = 'flex';
 	document.getElementById('winnerText').innerHTML = winnerMsg;
 	document.getElementById('winnerText').style.display = 'initial';
+	//do not reload if player wants to play again (event.preventDefault) 
+	// they will be sent to waiting room
 	document.getElementById('yesPlayAgain').onclick = function(event) {
 		event.preventDefault();
 		console.log(socket.id + ' selected yes to play again');
 		endGame.style.display = 'none';
-		socket.emit('leaveTheGame', {"player":socket.id,"choice": true);
+		socket.emit('leaveTheGame', {"player":socket.id,"choice": true});
 		
 	} 	
+	//player doesn't want to play again they will be sent to main screen
 	document.getElementById('noPlayAgain').onclick = function(event) {
 		console.log(socket.id + ' selected no to play again');
-		event.preventDefault();
 		endGame.style.display = 'none';
-		socket.emit('leaveTheGame', {"player":socket.id,"choice": false);
+		window.location.reload();
+		socket.emit('leaveTheGame', {"player":socket.id,"choice": false});
 	}
 });
 
+//this is called if a player chose not to play again. Goes to opening screen
 socket.on('restart_game', (data) =>{
     //alert(data)
-	start_game.style.display = 'none';
-    before_game.style.display = 'none';
-	gameLength.style.display = 'none';
-	scoreboard.style.display = 'none';
+	audio.src = "/audio/themeSong.mp3";
+	restart_game();
 	login.style.display = 'table';
 	nameForm.style.display = 'block';
-    restartGame();
+    playerListHeading.innerText = "Connected Players";
+    playerListDiv.style.display = 'block';
+    document.getElementById('players').innerHTML = "";
 });
 
 function checkAnswer(data) {
@@ -246,7 +318,7 @@ function checkAnswer(data) {
 		document.getElementById('is_correct').innerHTML = "NO BUZZ DETECTED!!";
 	}
 
-	//Enable spin
+	//Reset wheel, spin will be enabled in 'next turn'
 	resetWheel();
 	console.log("Check answer yielded: " + correctBool + " (null = no buzz)");
 	return correctBool;
@@ -254,11 +326,6 @@ function checkAnswer(data) {
 }
 
 
-function restartGame() {
-    playerListHeading.innerText = "Connected Players";
-    playerListDiv.style.display = 'block';
-    document.getElementById('players').innerHTML = "";
-}
 
 
 spin_button.addEventListener('click', () => {
@@ -347,8 +414,8 @@ function resetWheel()
 {
 	theWheel.stopAnimation(false);  // Stop the animation, false as param so does not call callback function.
 	theWheel.rotationAngle = 0;     // Re-set the wheel angle to 0 degrees.
-	document.getElementById('spin_button').src = "images/spin_on.png";
-	document.getElementById('spin_button').className = "clickable";
+	//document.getElementById('spin_button').src = "images/spin_on.png";
+	//document.getElementById('spin_button').className = "clickable";
 	wheelSpinning = false;          // Reset to false to power buttons and spin can be clicked again.
 }
 
@@ -375,7 +442,8 @@ function displayPoints(indicatedSegment)
 		}
 	}
 
-	enablePoints();
+	socket.emit('enablePointsForCurrentPlayer');
+	//enablePoints();
 	points_display.style.display = 'table';
 }
 
@@ -435,10 +503,12 @@ socket.on('buzz3enable', () => {
 	document.getElementById('buzzbutton3').disabled = false;
 });
 
+//inplies that someone buzzed in
 socket.on('disableallbuzzers', (index) => {
 	clearBuzzers();
 	displayCurrent(index);
-	onTimesUp();
+	//reset timer, true param means someone buzzed in	
+	onTimesUp(true);
 });
 
 function clearBuzzers() {
@@ -607,10 +677,11 @@ function reset() {
 `;
 }
 
-function onTimesUp() {
+function onTimesUp(didBuzz) {
 	//Show Answer if no buzz
-	socket.emit('click', {"id": null, "choice": null});
-	checkAnswer(null);
+	if (!didBuzz){
+		socket.emit('click', {"id": null, "choice": null});
+	}
 	timeraudio.src = "";
 	clearInterval(timerInterval);
 	timeLeft = TIME_LIMIT;
@@ -633,7 +704,7 @@ function startTimer() {
 		setRemainingPathColor(timeLeft);
 
 		if (timeLeft === 0) {
-			onTimesUp();
+			onTimesUp(false);
 			timeraudio.src = "/audio/timesup.mp3";
 		}
 	}, 1000);

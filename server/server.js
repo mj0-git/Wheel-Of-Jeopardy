@@ -74,10 +74,18 @@ io.on('connection', (socket) => {
 		addPlayerToWaitingRoom(socket);
 	});
 
+	//get current player and tell client who to enable point slection for
+	socket.on('enablePointsForCurrentPlayer', () => {
+		let gameId = playerData[socket.id].getGameId();
+		let currentPlayer = gameData[gameId].getCurrentPlayer();
+		console.log("Server: enable point choice for player with sid" + currentPlayer);
+		io.to(gameId).emit('enablePoints', currentPlayer);
+	});
+
+	//will allow a user to rejoin waiting room by calling performDisconnect with rejoin = true
 	socket.on('leaveTheGame', (data) => {
-		if (socket.id == data.player){
-			console.log(socket.id + ' play again?: ' + data.choice);
-			performDisconnect(socket, rejoin=data.choice);
+		if (socket.id == data.player && data.choice){
+			performDisconnect(socket, rejoin=true);
 		}
 		
 
@@ -123,18 +131,26 @@ io.on('connection', (socket) => {
 	});
 
 	//next turn, check if questions remain
-	socket.on('nextTurn', function(counter){
-			
+	socket.on('nextTurn', function(counter){			
+		let gameId = playerData[socket.id].getGameId();
+		//this happens if no more questions remain
 		if (parseInt(counter) == 0){
+			//tells server to diable spin/wheel/clicking
+			io.to(gameId).emit('endGame');
+			//sets flag that game is over
+			gameData[gameId].setIsDone(true);
+			//determine winner(s)
 			console.log('No questions remaining. Computing the winner');
-			let gameId = playerData[socket.id].getGameId();
 			let winners = computeWinner(gameId);
+			//tell frontend to show winner modal
 			io.to(gameId).emit('showWinner', winners);
 		}
-	
-		console.log('Server: current player should be updated');
-		//update current player?
+		//tell front end to start next turn and who current player is
+		let currentPlayer = gameData[gameId].getCurrentPlayer();
+		console.log("Server: enable wheel for player with sid" + currentPlayer);
+		io.to(gameId).emit('startNextTurn', currentPlayer);
 	});
+
 
 	//if there are questions remaining, tell client to display num remaining
 	//if no questions remaining, calculate winner
@@ -144,6 +160,7 @@ io.on('connection', (socket) => {
 		io.to(gameId).emit('decrementQuestions', counter);
     });
 
+	//increment/decrement score
 	socket.on('adjustScore', (data) => {
 	   var gameId = playerData[socket.id].getGameId();
 	   // only allow let the player who answered adjust scores
@@ -158,6 +175,7 @@ io.on('connection', (socket) => {
 				playerData[data.player].decreaseScore(data.points);
 			}
 		   info = []
+			//tell front end the new scores for all players
 		   gameData[gameId].getPlayers().forEach((player) => { 
 				info.push(playerData[player].getScore());
 		   });
@@ -172,19 +190,31 @@ io.on('connection', (socket) => {
 
 	socket.on('hidebuzzers', (index) => {
 		var gameId = playerData[socket.id].getGameId();
+		
+		//make the current player update the game data
+		// this prevents multiple updates
+		let newCurrentPlayerSID = gameData[gameId].getPlayers()[index];
+		if (socket.id == newCurrentPlayerSID){
+			console.log('Server: current player is now player #' + index);
+			gameData[gameId].setCurrentPlayer(index);
+		}
+
 		io.to(gameId).emit('disableallbuzzers', index);
+		
 	});
 
 });
 
 function computeWinner(gameId){
    var scores = []
+	//get the scores for each player
    gameData[gameId].getPlayers().forEach((player) => { 
 		scores.push(playerData[player].getScore());
    });
-
+	//determine max score
    let maxScore = Math.max(...scores);
-   var winners = []
+   var winners = [maxScore]
+	//see if multiple players have a max score (tie)
    for (let i = 0; i < scores.length; i++) {
 	 if (scores[i] == maxScore){
          winners.push(playerData[gameData[gameId].getPlayers()[i]].getName());
@@ -234,13 +264,14 @@ function performDisconnect(socket, rejoin=false){
 		} 
 		//remove player session
 		delete playerData[socket.id];
-		console.log("Player " + socket.id + " deleted");
+		console.log("Player " + socket.id + " data deleted");
+		io.to(socket.id).emit("restart_game", "Enter your name");
 	} else {
 		//implies a player was removed from a game
 		//place them in the waiting room
 		playerData[socket.id].setGameId(null);
-		io.to(socket.id).emit("restart_game", "You are now in the waiting room");
 		addPlayerToWaitingRoom(socket);
+		io.to(socket.id).emit("waiting_room", "You are now in the waiting room");
 	 }
 	
 }

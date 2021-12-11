@@ -28,7 +28,6 @@ class Player {
 
     setName(name){
         this.name = name;
-        console.log("MY NAME IS" + name);
     }
 
     setWaiting(value){

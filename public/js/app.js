@@ -8,6 +8,7 @@ let playerListHeading = document.getElementById('playerListHeading');
 let login = document.getElementById('login');
 let before_game = document.getElementById('before_game');
 let gameLength = document.getElementById('gameLength');
+let endGame = document.getElementById('endGame');
 let lengthText = document.getElementById('lengthText');
 let temp_correct = null; 
 let messages = document.getElementById('messages');
@@ -60,15 +61,16 @@ socket.on('setGameLength', () => {
 	//event listener on text field should emit game length
 	//to setServerGameLength, for example:
 	gameLength.style.display = 'flex';
-	document.getElementById('lengthText').addEventListener('input', () => {
+	document.getElementById('lengthText').addEventListener('input', e => {
+		e.preventDefault();
 		if (lengthText.value <= 30) {
 			document.getElementById('lengthButton').style.display = 'initial';
 			document.getElementById('remainQuest').innerHTML = lengthText.value;
 			document.getElementById('valueError').style.display = 'none';
 			document.getElementById('lengthButton').addEventListener('click', e => {
+				e.preventDefault();
 				socket.emit("setServerGameLength", lengthText.value);
 				gameLength.style.display = 'none';
-				e.preventDefault();
 			});
 		} else {
 			document.getElementById('lengthButton').style.display = 'none';
@@ -98,11 +100,15 @@ socket.on('joinGame', (info) => {
 	//playerListDiv.style.display = 'none';
 });
 
-socket.on('updateScore', (info) => {
+// Update data shown for player scores
+socket.on('displayScore', (info) => {
      
-    document.getElementById('score-one').innerHTML = info.s[0];
-    document.getElementById('score-two').innerHTML = info.s[1];
-    document.getElementById('score-three').innerHTML = info.s[2];
+    document.getElementById('score-one').innerHTML = info.score[0];
+    document.getElementById('score-two').innerHTML = info.score[1];
+    document.getElementById('score-three').innerHTML = info.score[2];
+	console.log('Updated score elements. Going to next turn. Questions remaining: ' + document.getElementById('remainQuest').innerHTML);
+	
+	socket.emit('nextTurn', document.getElementById('remainQuest').innerHTML);
 });
 
 
@@ -120,6 +126,7 @@ socket.on('renderWheel', (info) => {
 	resetWheel();
 });
 
+// Update data shown for who is waiting
 socket.on('updateWaitingList', (playerNames) => {
 	 updatePlayerList(playerNames);
 });
@@ -131,20 +138,60 @@ socket.on('displayQuestion', (data) => {
 	}, 3000); 
 });
 
+// Check whether answer was correct or incorrect
 socket.on('checkAnswer', (data) => {
 	disableChoices();
 	var isCorrect = checkAnswer(data.choice);
+
+	//send message to server to update player scores
+	var pointsAtStake = parseInt(document.getElementById('points').innerHTML);
 	if (socket.id == data.id) {
 		if (isCorrect == true) {
-			socket.emit('iscorrect', {"player": data.id});
+			//player was correct
+			console.log('Send msg to server to add ' + data.id + ' score by ' + pointsAtStake);
+			socket.emit('adjustScore', {"correct": true, "player": data.id, "points": pointsAtStake});
 		} else if (isCorrect == false) {
-			socket.emit('isincorrect', {"player": data.id});
+			//player was incorrect
+			console.log('Send msg to server to subtract ' + data.id + ' score by ' + pointsAtStake);
+			socket.emit('adjustScore', {"correct":false, "player": data.id, "points": pointsAtStake});
+		} else if (isCorrect == null) {
+			console.log('No buzz in, going to next turn');
+			socket.emit('nextTurn', document.getElementById('remainQuest').innerHTML);
 		}	
 	}
 });
 
 socket.on('decrementQuestions', (data) => {
+	console.log('Setting questions remaining to' + data);
 	document.getElementById('remainQuest').innerHTML = data;
+});
+
+socket.on('showWinner', (data) => {
+	var winnerMsg = '';
+	if (data.length == 1){
+		winnerMsg = 'Congratulations, ' + data[0] + ' won the game!';
+	} else if (data.length == 2) {
+		winnerMsg = 'There was a tie! ' + data[0] + ' and ' + data[1] + ' won the game!';
+	} else if (data.length === 3){
+		winnerMsg = 'There was a tie! ' + data[0] + ', ' + data[1] + ', and ' + data[2] + ' won the game!';
+	} else {
+		winnerMsg = 'Uh oh, we could not choose a winner';
+	} 
+	console.log('Winner Message:' + winnerMsg);
+	endGame.style.display = 'flex';
+	document.getElementById('winnerText').innerHTML = winnerMsg;
+	document.getElementById('winnerText').style.display = 'initial';
+	document.getElementById('yesPlayAgain').onclick = function(event) {
+		event.preventDefault();
+		endGame.style.display = 'none';
+		socket.emit('leaveTheGame', true);
+		
+	} 	
+	document.getElementById('noPlayAgain').onclick = function(event) {
+		event.preventDefault();
+		endGame.style.display = 'none';
+		socket.emit('leaveTheGame', false);
+	}
 });
 
 socket.on('restart_game', (data) =>{
@@ -194,6 +241,7 @@ function checkAnswer(data) {
 
 	//Enable spin
 	resetWheel();
+	console.log("Check answer yielded: " + correctBool + " (null = no buzz)");
 	return correctBool;
 	
 }

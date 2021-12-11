@@ -64,10 +64,18 @@ io.on('connection', (socket) => {
 
 	});
  
+	//received player name from the form input
 	socket.on('gotName', (data) => {
 		console.log("Player " + socket.id + " entered the name " + data);
 		playerData[socket.id].setName(data);
 		addPlayerToWaitingRoom(socket);
+	});
+
+	socket.on('leaveTheGame', (choice) => {
+		console.log(socket.id + ' play again?: ' + choice);
+		
+		performDisconnect(socket, rejoin=choice);
+
 	});
 	
 	socket.on('disconnect', () => {
@@ -82,55 +90,86 @@ io.on('connection', (socket) => {
 				}
 			});
 		}
-		//remove game session
-		delete gameData[gameId];
 		//disconnect/clean up player data
 		performDisconnect(socket, rejoin=false);
 	});
 
+	//an answer choice was clicked. Tell clients to check answer
+	//index contains the socket.id of who clicked and the choice
 	socket.on('click', function(index){
 		var gameId = playerData[socket.id].getGameId();
         io.to(gameId).emit('checkAnswer', index);
     });
 
+	//a question point value was chosen. Tell clients to display question
 	socket.on('click-point', function(index){
 		var gameId = playerData[socket.id].getGameId();
-		gameData[gameId].setQuestionPointChoice(index);
+		console.log('Server: emit message to display the question');
 		io.to(gameId).emit('displayQuestion', index);
 	});
 
-	socket.on('decrementQCounter', function(data){
-		io.emit('decrementQuestions', data);
+	//next turn, check if questions remain
+	socket.on('nextTurn', function(counter){
+			
+		if (parseInt(counter) == 0){
+			console.log('No questions remaining. Computing the winner');
+			let gameId = playerData[socket.id].getGameId();
+			let winners = computeWinner(gameId);
+			io.to(gameId).emit('showWinner', winners);
+		}
+	
+		console.log('Server: current player should be updated');
+		//update current player?
+	});
+
+	//if there are questions remaining, tell client to display num remaining
+	//if no questions remaining, calculate winner
+	socket.on('decrementQCounter', function(counter){
+		console.log('Server: emit message to decrement questions');	
+	    var gameId = playerData[socket.id].getGameId();
+		io.to(gameId).emit('decrementQuestions', counter);
     });
 
-	socket.on('iscorrect', (data) => {
-               var gameId = playerData[socket.id].getGameId();
-               var points = gameData[gameId].getQuestionPointChoice();
-			   console.log("Points " + points);
-			   playerData[data.player].increaseScore(points);
-               info = []
-               gameData[gameId].getPlayers().forEach((player) => { 
-               if (player != socket.id){
-                       info.push(playerData[player].getScore());
-                       }
-               });
-               io.to(gameId).emit('updateScore',{"s":info});
-       });
+	socket.on('adjustScore', (data) => {
+	   var gameId = playerData[socket.id].getGameId();
+	   // only allow let the player who answered adjust scores
+	   // this avoids the score being computed three times
+	   console.log('Server: adjusting score for ' + data.player);
+	   if (socket.id == data.player) {
+			if (data.correct == true){   
+	   			console.log("Player " + socket.id + " was correct and gains " + data.points);
+				playerData[data.player].increaseScore(data.points);
+			} else {
+	   			console.log("Player " + socket.id + " was incorrect and gains " + data.points);
+				playerData[data.player].decreaseScore(data.points);
+			}
+		   info = []
+		   gameData[gameId].getPlayers().forEach((player) => { 
+				info.push(playerData[player].getScore());
+		   });
+		   console.log('Server: emit message to update the displayed score');
+		   io.to(gameId).emit('displayScore',{"score":info});
+	   }
+	});
 
-    socket.on('isincorrect', (data) => {
-               var gameId = playerData[socket.id].getGameId();
-               var points = gameData[gameId].getQuestionPointChoice();
-               playerData[data.player].decreaseScore(points);
-               info = []
-               gameData[gameId].getPlayers().forEach((player) => { 
-               if (player != socket.id){
-                       info.push(playerData[player].getScore());
-                       }
-               });
-               io.to(gameId).emit('updateScore',{"s":info});
-       });
 
 });
+
+function computeWinner(gameId){
+   var scores = []
+   gameData[gameId].getPlayers().forEach((player) => { 
+		scores.push(playerData[player].getScore());
+   });
+
+   let maxScore = Math.max(...scores);
+   var winners = []
+   for (let i = 0; i < scores.length; i++) {
+	 if (scores[i] == maxScore){
+         winners.push(playerData[gameData[gameId].getPlayers()[i]].getName());
+	 } 	
+   }
+   return winners 
+}
 
 function generatePlayerData(socket){
 	var gameId = playerData[socket.id].getGameId();
@@ -157,7 +196,13 @@ function addPlayerToWaitingRoom(socket){
 }
 
 function performDisconnect(socket, rejoin=false){
- 
+    let gameId = playerData[socket.id].getGameId();
+	if (gameData[gameId].getPlayers().length == 1){
+
+		//remove game session
+		delete gameData[gameId];
+	}
+
 	if (!rejoin){
 	    // remove player from waiting room if they are waiting	
 		var pos = waitingRoom.indexOf(socket.id)
@@ -171,9 +216,9 @@ function performDisconnect(socket, rejoin=false){
 		//implies a player was removed from a game
 		//place them in the waiting room
 		playerData[socket.id].setGameId(null);
-		io.to(socket.id).emit("restart_game", "A player has left the game! You are now in the waiting room");
+		io.to(socket.id).emit("restart_game", "You are now in the waiting room");
 		addPlayerToWaitingRoom(socket);
-	}
+	 }
 	
 }
 

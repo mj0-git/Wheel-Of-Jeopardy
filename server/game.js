@@ -6,13 +6,6 @@ class Game{
         this.remaining = 0;
         this.current_idx = null;
     	this.question_point_choice = null;
-		this.pointMap = {
-            "0":10,
-            "1":20,
-            "2":30,
-            "3":40,
-            "4":50
-            }
 	}
     getPlayers(){
         return this.players;
@@ -49,7 +42,7 @@ class Game{
     }
 	setQuestionPointChoice(choice){
 		
-		this.question_point_choice = this.pointMap[choice.toString()];
+		this.question_point_choice = 0
 		
 	}
 	getQuestionPointChoice(){

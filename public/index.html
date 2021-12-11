@@ -63,13 +63,21 @@
         <div class="remainLength" id="remainQuest"></div>
     </div>
 
+    <div class="end-modal" id="endGame" style="display: none">
+        <div class="modal-content">
+            <div id="winnerText" class="text-large colorPrimary"></div>
+            <div id="playAgainText" class="text-title-small" >Would you like to play again?</div>
+			<button id="yesPlayAgain">Yes!</button>
+			<button id="noPlayAgain">No thanks</button>
+        </div>
+    </div>
     <div class="bg-modal" id="gameLength" style="display: none">
         <div class="modal-content">
             <div class="text-title-small colorPrimary">Set Game Length</div>
             <div id="valueError" class="errorFont" style="display: none"></div>
             <form action="">
                 <input class="text-small inputColor" id="lengthText" type="text" placeholder="Number of Questions" />
-                <a href="#" class="lengthButton" id="lengthButton">Submit</a>
+                <a href="#" onclick="return false;" class="lengthButton" id="lengthButton">Submit</a>
             </form>
         </div>
     </div>

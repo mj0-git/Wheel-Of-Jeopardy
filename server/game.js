@@ -6,6 +6,14 @@ class Game{
         this.remaining = 0;
         this.current_idx = null;
     	this.question_point_choice = null;
+		this.isDone = false;
+	}
+	setIsDone(){
+		this.isDone = true;
+	}
+	
+	getIsDone(){
+		return this.isDone;
 	}
     getPlayers(){
         return this.players;

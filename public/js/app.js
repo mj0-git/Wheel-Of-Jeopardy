@@ -144,27 +144,29 @@ socket.on('displayQuestion', (data) => {
 socket.on('checkAnswer', (data) => {
 	disableChoices();
 	var isCorrect = checkAnswer(data.choice);
-
+	
 	//send message to server to update player scores
 	var pointsAtStake = parseInt(document.getElementById('points').innerHTML);
-	if (socket.id == data.id) {
+	if (isCorrect == null) {
+		console.log('No buzz in, going to next turn');
+		socket.emit('nextTurn', document.getElementById('remainQuest').innerHTML);
+	} else if (socket.id == data.id) {
 		if (isCorrect == true) {
 			//player was correct
 			console.log('Send msg to server to add ' + data.id + ' score by ' + pointsAtStake);
 			socket.emit('adjustScore', {"correct": true, "player": data.id, "points": pointsAtStake});
+			
 		} else if (isCorrect == false) {
 			//player was incorrect
 			console.log('Send msg to server to subtract ' + data.id + ' score by ' + pointsAtStake);
 			socket.emit('adjustScore', {"correct":false, "player": data.id, "points": pointsAtStake});
-		} else if (isCorrect == null) {
-			console.log('No buzz in, going to next turn');
-			socket.emit('nextTurn', document.getElementById('remainQuest').innerHTML);
-		}	
+		}
+
 	}
 });
 
 socket.on('decrementQuestions', (data) => {
-	console.log('Setting questions remaining to' + data);
+	console.log('Setting questions remaining to ' + data);
 	document.getElementById('remainQuest').innerHTML = data;
 });
 
@@ -185,14 +187,16 @@ socket.on('showWinner', (data) => {
 	document.getElementById('winnerText').style.display = 'initial';
 	document.getElementById('yesPlayAgain').onclick = function(event) {
 		event.preventDefault();
+		console.log(socket.id + ' selected yes to play again');
 		endGame.style.display = 'none';
-		socket.emit('leaveTheGame', true);
+		socket.emit('leaveTheGame', {"player":socket.id,"choice": true);
 		
 	} 	
 	document.getElementById('noPlayAgain').onclick = function(event) {
+		console.log(socket.id + ' selected no to play again');
 		event.preventDefault();
 		endGame.style.display = 'none';
-		socket.emit('leaveTheGame', false);
+		socket.emit('leaveTheGame', {"player":socket.id,"choice": false);
 	}
 });
 
@@ -219,6 +223,7 @@ function checkAnswer(data) {
 		}
 	}
 	// Check if buzzed
+	console.log('Check answer got :'  + data);
 	if (data != null){
 		var attempt = document.getElementById(data).innerHTML;
 		if(answer == attempt){
@@ -604,7 +609,8 @@ function reset() {
 
 function onTimesUp() {
 	//Show Answer if no buzz
-	//checkAnswer(null);
+	socket.emit('click', {"id": null, "choice": null});
+	checkAnswer(null);
 	timeraudio.src = "";
 	clearInterval(timerInterval);
 	timeLeft = TIME_LIMIT;

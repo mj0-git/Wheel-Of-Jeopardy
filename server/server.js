@@ -74,27 +74,38 @@ io.on('connection', (socket) => {
 		addPlayerToWaitingRoom(socket);
 	});
 
-	socket.on('leaveTheGame', (choice) => {
-		console.log(socket.id + ' play again?: ' + choice);
+	socket.on('leaveTheGame', (data) => {
+		if (socket.id == data.player){
+			console.log(socket.id + ' play again?: ' + data.choice);
+			performDisconnect(socket, rejoin=data.choice);
+		}
 		
-		performDisconnect(socket, rejoin=choice);
 
 	});
 	
 	socket.on('disconnect', () => {
         console.log(playerData[socket.id].getName() + " has disconnected.");
     	var gameId = playerData[socket.id].getGameId();
-		//send other opponents in the game session back to waiting room
 		if (gameId != null){
-			gameData[gameId].getPlayers().forEach((player) => { 
-				if (player != socket.id){
-					playerData[player].getSocket().leave(gameId);
-					performDisconnect(playerData[player].getSocket(), rejoin=true);
-				}
-			});
+			//player left a finished game. Do not kick out remaining players until they select yes or no
+			if (gameData[gameId].getIsDone()){
+				//disconnect/clean up player data
+				performDisconnect(socket, rejoin=false);
+			} else { //during the game, kick everyone out of the game if someone leaves. Put remaining players in waiting
+				//send other opponents in the game session back to waiting room
+				gameData[gameId].getPlayers().forEach((player) => { 
+					if (player != socket.id){
+						playerData[player].getSocket().leave(gameId);
+						performDisconnect(playerData[player].getSocket(), rejoin=true);
+					}
+				});
+			}
+		} else {
+			//imples player was in waiting room
+			//disconnect/clean up player data
+			performDisconnect(socket, rejoin=false);
 		}
-		//disconnect/clean up player data
-		performDisconnect(socket, rejoin=false);
+
 	});
 
 	//an answer choice was clicked. Tell clients to check answer
@@ -207,9 +218,10 @@ function addPlayerToWaitingRoom(socket){
 }
 
 function performDisconnect(socket, rejoin=false){
-    let gameId = playerData[socket.id].getGameId();
-	if (gameData[gameId].getPlayers().length == 1){
-
+    
+	let gameId = playerData[socket.id].getGameId();
+	//if this was the last player in the game, delete game data
+	if (gameId != null && gameData[gameId].getPlayers().length == 1) {
 		//remove game session
 		delete gameData[gameId];
 	}

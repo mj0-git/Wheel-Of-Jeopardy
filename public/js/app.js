@@ -17,6 +17,7 @@ let input = document.getElementById('input');
 let score1 = document.getElementById('score-one');
 let score2 = document.getElementById('score-two');
 let score3 = document.getElementById('score-three');
+let leaveButton = document.getElementById('leaveButton');
  
 
 
@@ -42,6 +43,7 @@ function restartGame(){
     before_game.style.display = 'none';
 	gameLength.style.display = 'none';
 	scoreboard.style.display = 'none';
+	leaveButton.style.display = 'none';
 }
 
 
@@ -87,6 +89,7 @@ socket.on('setGameLength', () => {
 	//event listener on text field should emit game length
 	//to setServerGameLength, for example:
 	gameLength.style.display = 'flex';
+	leaveButton.style.display = 'none';
 	document.getElementById('lengthText').addEventListener('input', e => {
 		e.preventDefault();
 		if (lengthText.value <= 30) {
@@ -97,6 +100,7 @@ socket.on('setGameLength', () => {
 				e.preventDefault();
 				socket.emit("setServerGameLength", lengthText.value);
 				gameLength.style.display = 'none';
+				leaveButton.style.display = 'grid';
 			});
 		} else {
 			document.getElementById('lengthButton').style.display = 'none';
@@ -111,6 +115,7 @@ socket.on('joinGame', (info) => {
 	before_game.style.display = 'none';
 	start_game.style.display = 'table';
 	scoreboard.style.display = 'grid';
+	leaveButton.style.display = 'grid';
 	buzzbutton1.style.display = 'none';
 	buzzbutton2.style.display = 'none';
 	buzzbutton3.style.display = 'none';
@@ -326,6 +331,13 @@ function checkAnswer(data) {
 }
 
 
+document.getElementById('leaveButton').addEventListener('click', () => {
+	document.getElementById('leaveGame').style.display = 'flex';
+});
+
+document.getElementById('noButton').addEventListener('click', () => {
+	document.getElementById('leaveGame').style.display = 'none';
+})
 
 
 spin_button.addEventListener('click', () => {

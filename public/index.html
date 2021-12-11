@@ -66,9 +66,9 @@
     <div class="end-modal" id="endGame" style="display: none">
         <div class="modal-content">
             <div id="winnerText" class="text-large colorPrimary"></div>
-            <div id="playAgainText" class="text-small colorPrimary" >Would you like to play again?</div>
-			<button id="yesPlayAgain">Yes!</button>
-			<button id="noPlayAgain">No thanks</button>
+            <div id="playAgainText" class="text-small colorPrimary">Would you like to play again?</div>
+            <button id="yesPlayAgain">Yes!</button>
+            <button id="noPlayAgain">No thanks</button>
         </div>
     </div>
     <div class="bg-modal" id="gameLength" style="display: none">
@@ -82,38 +82,55 @@
         </div>
     </div>
 
+    <div class="leaveGameButton" id="leaveButton" style="display: none">
+        <a href="#" class="leaveGameButton">
+            <i class="fa fa-home"></i>
+            </a>
+
+    </div>
+
+    <div class="bg-modal" id="leaveGame" style="display: none">
+        <div class="modal-content">
+            <div class="text-title-small colorPrimary">Do You Want To Leave?</div>
+            <form action="">
+                <a href="" id="yesButton" class="yesButton">YES</a>
+                <a href="#" id="noButton" class="noButton">NO</a>
+            </form>
+        </div>
+    </div>
+
     <table id="start_game" style="display: none">
         <tr>
             <td width="438" height="582" align="center" valign="center">
                 <div class="display-box" align="center">
-                    <table id="points_display" class ="points-table" style="display: none" >
-                    <th colspan="2">Select Point</th>  
-                     <tr>
-                        <td id="point-0" onclick="socket.emit('click-point', '0');" style="display: none"> </td>
-                        <td id="point-1" onclick="socket.emit('click-point', '1');" style="display: none"> </td>
-                      </tr>
-                      <tr>
-                        <td id="point-2" onclick="socket.emit('click-point', '2');" style="display: none"></td>
-                        <td id="point-3" onclick="socket.emit('click-point', '3');"style="display: none"> </td>
-                      </tr>
-                      <tr>
-                        <td id="point-4" onclick="socket.emit('click-point', '4');"colspan="2" style="display: none"> </td>
-                      </tr>
+                    <table id="points_display" class="points-table" style="display: none">
+                        <th colspan="2">Select Point</th>
+                        <tr>
+                            <td id="point-0" onclick="socket.emit('click-point', '0');" style="display: none"> </td>
+                            <td id="point-1" onclick="socket.emit('click-point', '1');" style="display: none"> </td>
+                        </tr>
+                        <tr>
+                            <td id="point-2" onclick="socket.emit('click-point', '2');" style="display: none"></td>
+                            <td id="point-3" onclick="socket.emit('click-point', '3');" style="display: none"> </td>
+                        </tr>
+                        <tr>
+                            <td id="point-4" onclick="socket.emit('click-point', '4');" colspan="2" style="display: none"> </td>
+                        </tr>
                     </table>
-                    <table id="question_display" class ="questions-table" style="display: none" >
-                        <th colspan="2" id="question"></th>  
+                    <table id="question_display" class="questions-table" style="display: none">
+                        <th colspan="2" id="question"></th>
                         <tr>
                             <td id="choice-1" onclick="socket.emit('click', 'choice-1');"></th>
                             <td id="choice-2" onclick="socket.emit('click', 'choice-2');"></th>
                         </tr>
                         <tr>
-                            <td id="choice-3"onclick="socket.emit('click', 'choice-3');"></th>
-                            <td id="choice-4"onclick="socket.emit('click', 'choice-4');"></th>
+                            <td id="choice-3" onclick="socket.emit('click', 'choice-3');"></th>
+                            <td id="choice-4" onclick="socket.emit('click', 'choice-4');"></th>
                             <td id="answer" style="display: none"></th>
                             <td id="points" style="display: none"></th>
                         </tr>
                         <tr>
-                            <td id="is_correct" colspan="2" > </td>
+                            <td id="is_correct" colspan="2"> </td>
                         </tr>
                     </table>
                 </div>

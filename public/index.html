@@ -122,7 +122,9 @@
                 </canvas>
                 <div class="spin_controls">
                     <img id="spin_button" src="/images/spin_off.png" alt="Spin" />
-                    <button type="submit" class="buzzbutton" id="buzzbutton">BUZZ IN</button>
+                    <button type="submit" class="buzzbutton" id="buzzbutton1" disabled onclick="socket.emit('disableallbuzzers');">BUZZ IN</button>
+                    <button type="submit" class="buzzbutton" id="buzzbutton2" disabled onclick="socket.emit('disableallbuzzers');">BUZZ IN</button>
+                    <button type="submit" class="buzzbutton" id="buzzbutton3" disabled onclick="socket.emit('disableallbuzzers');">BUZZ IN</button>
                     <audio id="timeraudio" style="display: none" autoplay>
                         <source src="">
                     </audio>

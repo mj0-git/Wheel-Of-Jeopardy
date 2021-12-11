@@ -37,6 +37,11 @@ class Game{
     getCurrentPlayer(){
         return players[this.current_idx];
     }
+
+    setCurrentPlayer(index) {
+        this.current_idx = index;
+    }
+
     getGameId(){
         return this.gid;
     }

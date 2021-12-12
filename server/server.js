@@ -63,7 +63,7 @@ io.on('connection', (socket) => {
 
 	});
 	socket.on('rcv message', (msg) => {
-		const string1 = socket.id + ': ' + msg;
+		const string1 = playerData[socket.id].getName() + ': ' + msg;
 		io.emit('chat message', string1);
 
 	});

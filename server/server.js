@@ -279,25 +279,25 @@ function performDisconnect(socket, rejoin=false){
 
 
 function loadWheel(){
-	//let con = mysql.createConnection(connectionDetails);
-	//con.query('SELECT * FROM questions ORDER BY category', function (error, results, fields) {
-	//	if (error) throw error;
-	//	var category = new Category(results[0].category, 5);
-	//	for (i in results) {
-	//		if (results[i].category != category.name) {
-	//			wheel.push(category);
-	//			category = new Category(results[i].category, 5);
-	//		}
-	//		var title = results[i].title;
-	//		var choices = [results[i].answer_a, results[i].answer_b, results[i].answer_c, results[i].answer_d];
-	//		var answer = results[i].correct_answer
-	//		var points = results[i].points
-	//		category.addQuestion(title, choices, answer, points);
-	//	}
-	//	wheel.push(category);
-	//	//console.log(wheel);
-	//});
-	//con.end();
+	let con = mysql.createConnection(connectionDetails);
+	con.query('SELECT * FROM questions ORDER BY category', function (error, results, fields) {
+		if (error) throw error;
+		var category = new Category(results[0].category, 5);
+		for (i in results) {
+			if (results[i].category != category.name) {
+				wheel.push(category);
+				category = new Category(results[i].category, 5);
+			}
+			var title = results[i].title;
+			var choices = [results[i].answer_a, results[i].answer_b, results[i].answer_c, results[i].answer_d];
+			var answer = results[i].correct_answer
+			var points = results[i].points
+			category.addQuestion(title, choices, answer, points);
+		}
+		wheel.push(category);
+		//console.log(wheel);
+	});
+	con.end();
 }
 
 //select first three players and make a Game session for them

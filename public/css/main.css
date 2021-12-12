@@ -40,7 +40,7 @@ body {
     background-image: url(../images/scoreboard.png), url('https://cdn.vox-cdn.com/thumbor/qQedNsGXYjJ7cDlkw0tqJBQ7gF0=/1400x788/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/19932173/jeopardy_virus_ringer_illo.jpg'), url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOXm4aockyNYlTa8t9GxreqiyHhMAfEU9lFw&usqp=CAU');
     width: 80%, 100%;
     height: none, 100%;
-    background-size: 59% 13%, auto, cover;
+    background-size: 59% 15%, auto, cover;
     background-repeat: no-repeat;
     background-position: top center, center;
 }

@@ -567,3 +567,62 @@ lengthButton:active {
   width: 600px;
   height: 200px;
  }
+
+.hd-chat-window {
+    width: 400px;
+    height: 300px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    transform: translate(-50%,0);
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: darkblue;
+}
+
+#messages {
+    width: 100%;
+    height: calc(100% - 45px);
+    margin-bottom: 10px;
+    text-align: left !important;
+    overflow: auto;
+}
+
+#hd-chat-input {
+    width: 100%;
+    height: 33px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left !important;
+}
+
+#hd-chat-text {
+    width: calc(100% - 85px);
+    height: 25px;
+    float: left;
+    margin-top: 10px;
+    text-align: left !important;
+}
+
+#hd-chat-text input {
+        width: 100%;
+        height: 25px;
+        border: none;
+        margin: 0;
+        padding: 0 10px;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.2);
+        text-align: left !important;
+}
+
+#hd-chat-send {
+    width: 70px;
+    margin-left: 15px;
+    margin-top: 10px;
+    height: 25px;
+    float: left;
+    background: rgba(255, 255, 255, 0.2);
+    text-align: center;
+    line-height: 25px;
+}

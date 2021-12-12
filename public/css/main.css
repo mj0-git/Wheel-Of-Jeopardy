@@ -36,6 +36,15 @@ body {
     width: 100%, 100%;
 }
 
+.background {
+    background-image: url(../images/scoreboard.png), url('https://cdn.vox-cdn.com/thumbor/qQedNsGXYjJ7cDlkw0tqJBQ7gF0=/1400x788/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/19932173/jeopardy_virus_ringer_illo.jpg'), url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOXm4aockyNYlTa8t9GxreqiyHhMAfEU9lFw&usqp=CAU');
+    width: 80%, 100%;
+    height: none, 100%;
+    background-size: 59% 13%, auto, cover;
+    background-repeat: no-repeat;
+    background-position: top center, center;
+}
+
 * {
   border: none;
   text-align: center;
@@ -363,7 +372,7 @@ yesButton:active {
     padding: 10px;
     text-align: center;
     width: 100%;
-    background-color: #222256;
+    background-color: transparent;
 }
 
 .scoreboardName {
@@ -371,32 +380,22 @@ yesButton:active {
     text-align: center;
     width: 100%;
     font-weight: bold;
-    border-bottom: 1px solid #ddd;
-    background-color: #1c1c3d;
-}
-
-.playerOneTurn {
-    box-shadow: 0px 80px 40px 10px #0ff;
-}
-
-.playerTwoTurn {
-    box-shadow: 0px 80px 40px 10px #0ff;
-}
-
-.playerThreeTurn {
-    box-shadow: 0px 80px 40px 10px #0ff;
 }
 
 .remainingQuestions {
     font-weight: bold;
-    border-left: 1px solid #ddd;
-    background-color: #45456c;
+    border-left: #d4d1a2 solid 3px;
+    background-color: darkblue;
+    background-size: 100%;
+    border-bottom: #d4d1a2 solid 3px;
 }
 
 .timer {
     font-weight: bold;
-    border-right: 1px solid #ddd;
-    background-color: #45456c;
+    border-right: #d4d1a2 solid 3px;
+    background-color: darkblue;
+    background-size: 100%;
+    border-bottom: #d4d1a2 solid 3px;
 }
 
 .scoreboardNameOne {
@@ -404,7 +403,7 @@ yesButton:active {
 }
 
 .scoreboardNameTwo {
-    color: #1729d7;
+    color: #40c1e4;
 }
 
 .scoreboardNameThree {
@@ -413,26 +412,24 @@ yesButton:active {
 
 .scoreboardScore {
     font-size: 2em;
-    border-bottom: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-left: 1px solid #ddd;
 }
 
 .remainLength {
-    font-size: 2em;
+    font-size: 4em;
     text-align: center;
-    background-color: #45456c;
-    background-size: 60%;
-    background-position: center;
+    background-image: url('https://www.youthdownloads.com//triviamaker/wp-content/themes/stratusx-child/template/upload/0oBm0BL75xR47F6USxG7RumvHLv2/20210307161513783894641/910bg.png');
+    border-bottom: #d4d1a2 solid 3px;
+    border-left: #d4d1a2 solid 3px;
+
 }
 
 .timeLeft {
-    border-right: 1px solid #ddd;
     text-align: center;
     vertical-align: central;
-    background-color: #45456c;
-    background-size: 60%;
-    background-position: center;
+    background-image: url('https://www.youthdownloads.com//triviamaker/wp-content/themes/stratusx-child/template/upload/0oBm0BL75xR47F6USxG7RumvHLv2/20210307161513783894641/910bg.png');
+    border-bottom: #d4d1a2 solid 3px;
+    border-right: #d4d1a2 solid 3px;
+    position: center;
 }
 
 #summary {
@@ -498,7 +495,7 @@ yesButton:active {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 1);
-    position: absolute;
+    position: absolute absolute;
     top: 0;
     display: flex;
     justify-content: center;
@@ -508,11 +505,12 @@ yesButton:active {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
-    position: absolute;
+    position: fixed;
     top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 2;
 }
 
 .modal-content {

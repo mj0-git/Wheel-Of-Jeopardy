@@ -44,6 +44,8 @@ function restartGame(){
 	gameLength.style.display = 'none';
 	scoreboard.style.display = 'none';
 	leaveButton.style.display = 'none';
+	document.getElementById('remainQuest').innerHTML = '';
+	document.getElementById('lengthText').innerHTML = '';
 }
 
 
@@ -609,28 +611,28 @@ function buzzin() {
 
 function displayCurrent(currentNum) {
 	if (currentNum == 0) {
-		document.getElementById('player-one').classList.add('playerOneTurn');
 		document.getElementById('player-one').classList.add('glow');
-		document.getElementById('player-two').classList.remove('playerTwoTurn');
+		document.getElementById('score-one').classList.add('glow');
 		document.getElementById('player-two').classList.remove('glow');
-		document.getElementById('player-three').classList.remove('playerThreeTurn');
+		document.getElementById('score-two').classList.remove('glow');
 		document.getElementById('player-three').classList.remove('glow');
+		document.getElementById('score-three').classList.remove('glow');
 	}
 	if (currentNum == 1) {
-		document.getElementById('player-one').classList.remove('playerOneTurn');
 		document.getElementById('player-one').classList.remove('glow');
-		document.getElementById('player-two').classList.add('playerTwoTurn');
+		document.getElementById('score-one').classList.remove('glow');
 		document.getElementById('player-two').classList.add('glow');
-		document.getElementById('player-three').classList.remove('playerThreeTurn');
+		document.getElementById('score-two').classList.add('glow');
 		document.getElementById('player-three').classList.remove('glow');
+		document.getElementById('score-three').classList.remove('glow');
 	}
 	if (currentNum == 2) {
-		document.getElementById('player-one').classList.remove('playerOneTurn');
 		document.getElementById('player-one').classList.remove('glow');
-		document.getElementById('player-two').classList.remove('playerTwoTurn');
+		document.getElementById('score-one').classList.remove('glow');
 		document.getElementById('player-two').classList.remove('glow');
-		document.getElementById('player-three').classList.add('playerThreeTurn');
+		document.getElementById('score-two').classList.remove('glow');
 		document.getElementById('player-three').classList.add('glow');
+		document.getElementById('score-three').classList.add('glow');
 	}
 }
 

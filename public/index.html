@@ -50,19 +50,6 @@
         </tr>
     </table>
 
-    <div class="scoreboardData" id="scoreboard" style="display: none">
-        <div class="timer">Time</div>
-        <div class="scoreboardName scoreboardNameOne" id="player-one">Player One</div>
-        <div class="scoreboardName scoreboardNameTwo" id="player-two">Player Two</div>
-        <div class="scoreboardName scoreboardNameThree" id="player-three">Player Three</div>
-        <div class="remainingQuestions">Questions Remaining</div>
-        <div class="timeLeft" id="app"></div>
-        <div class="scoreboardScore" id="score-one">0</div>
-        <div class="scoreboardScore" id="score-two">0</div>
-        <div class="scoreboardScore" id="score-three">0</div>
-        <div class="remainLength" id="remainQuest"></div>
-    </div>
-
     <div class="end-modal" id="endGame" style="display: none">
         <div class="modal-content">
             <div id="winnerText" class="text-large colorPrimary"></div>
@@ -82,26 +69,37 @@
         </div>
     </div>
 
-    <div class="leaveGameButton" id="leaveButton" style="display: none">
-        <a href="#" class="leaveGameButton">
-            <i class="fa fa-home"></i>
-            </a>
 
-    </div>
-
-    <div class="bg-modal" id="leaveGame" style="display: none">
-        <div class="modal-content">
-            <div class="text-title-small colorPrimary">Do You Want To Leave?</div>
-            <form action="">
-                <a href="" id="yesButton" class="yesButton">YES</a>
-                <a href="#" id="noButton" class="noButton">NO</a>
-            </form>
-        </div>
-    </div>
-
-    <table id="start_game" style="display: none">
+    <table class="background" id="start_game" style="display: none">
         <tr>
             <td width="438" height="582" align="center" valign="center">
+                <div class="bg-modal" id="leaveGame" style="display: none">
+                    <div class="modal-content">
+                        <div class="text-title-small colorPrimary">Do You Want To Leave?</div>
+                        <form action="">
+                            <a href="" id="yesButton" class="yesButton">YES</a>
+                            <a href="#" id="noButton" class="noButton">NO</a>
+                        </form>
+                    </div>
+                </div>
+                <div class="scoreboardData" id="scoreboard" style="display: none">
+                    <div class="timer">Time</div>
+                    <div class="scoreboardName scoreboardNameOne" id="player-one">Player One</div>
+                    <div class="scoreboardName scoreboardNameTwo" id="player-two">Player Two</div>
+                    <div class="scoreboardName scoreboardNameThree" id="player-three">Player Three</div>
+                    <div class="remainingQuestions">Questions Remaining</div>
+                    <div class="timeLeft" id="app"></div>
+                    <div class="scoreboardScore" id="score-one">0</div>
+                    <div class="scoreboardScore" id="score-two">0</div>
+                    <div class="scoreboardScore" id="score-three">0</div>
+                    <div class="remainLength glow" id="remainQuest"></div>
+                </div>
+                <div class="leaveGameButton" id="leaveButton" style="display: none">
+                    <a href="#" class="leaveGameButton">
+                        <i class="fa fa-home"></i>
+                    </a>
+
+                </div>
                 <div class="display-box" align="center">
                     <table id="points_display" class="points-table" style="display: none">
                         <th colspan="2">Select Point</th>

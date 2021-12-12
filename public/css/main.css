@@ -388,6 +388,7 @@ yesButton:active {
     background-color: darkblue;
     background-size: 100%;
     border-bottom: #d4d1a2 solid 3px;
+    border-radius: 20px;
 }
 
 .timer {
@@ -396,6 +397,7 @@ yesButton:active {
     background-color: darkblue;
     background-size: 100%;
     border-bottom: #d4d1a2 solid 3px;
+    border-radius: 20px;
 }
 
 .scoreboardNameOne {
@@ -420,8 +422,24 @@ yesButton:active {
     background-image: url('https://www.youthdownloads.com//triviamaker/wp-content/themes/stratusx-child/template/upload/0oBm0BL75xR47F6USxG7RumvHLv2/20210307161513783894641/910bg.png');
     border-bottom: #d4d1a2 solid 3px;
     border-left: #d4d1a2 solid 3px;
-
+    position: relative;
+    border-radius: 20px;
 }
+
+    .remainLength::after {
+        content: '';
+        position: absolute;
+        width: 82%;
+        height: 93%;
+        top: 12%;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        filter: blur(20px);
+        opacity: 90%;
+        background-color: inherit;
+        border-radius: inherit;
+    }
 
 .timeLeft {
     text-align: center;
@@ -430,6 +448,23 @@ yesButton:active {
     border-bottom: #d4d1a2 solid 3px;
     border-right: #d4d1a2 solid 3px;
     position: center;
+    position: relative;
+    border-radius: 20px;
+}
+
+.timeLeft::after {
+    content: '';
+    position: absolute;
+    width: 82%;
+    height: 93%;
+    top: 12%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    filter: blur(20px);
+    opacity: 90%;
+    background-color: inherit;
+    border-radius: inherit;
 }
 
 #summary {

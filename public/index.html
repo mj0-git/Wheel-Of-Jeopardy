@@ -148,14 +148,19 @@
                     </audio>
                     <br /><br />
                 </div>
-                <div id="wrapper">
-                    <div id="Chatbox" align="left"></div>
+                <div class="hd-chat-window shade-in-out dark-grad">
                     <ul id="messages"></ul>
                     <form name="message" action="" align="left" id="message">
-                        <input name="usermsg" type="text" id="usermsg" />
-                        <input name="submitmsg" type="submit" id="submitmsg" value="Send" />
+                        <div id="hd-chat-input">
+                            <div id="hd-chat-text">
+                                <input name="usermsg " type="text" placeholder="Enter text here" id="usermsg" />
+                            </div>
+                            <div id="hd-chat-send">
+                                <input name="submitmsg" type="submit" id="submitmsg" value="Send" />
+                            </div>
+                        </div>
                     </form>
-                </div>
+                 </div>
             </td>
         </tr>
     </table>

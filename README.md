@@ -1,31 +1,26 @@
-# Wheel-Of-Jeopardy
+# The Wheel Of Jeopardy!
+As part of our Foundations of Software Engineering Course, we have created a multiplayer video game “The Wheel of Jeopardy!”; a marriage of Wheel of Fortune and Jeopardy. 
 
-# Install Instructions: 
-1. Install nodejs from the website: https://nodejs.org/en/ 
-2. Open up terminal/cmd and run the below commands to install express, socket.io and nodemon: 
- - npm install -g nodemon
- - npm install --save express socket.io
+![](./images/gameplay.png)
 
-# Run Instructions:   
-1. Open Terminal and navigate to directory Wheel-Of-Jeopardy/
-2. Run Command:  
- - nodemon server/server.js
+# Setup: 
+1. Install Node: __[NodeJS](https://nodejs.org/en/)__ 
+2. Npm Dependencies:
+  ```
+    npm install socket.io
+    npm install -g nodemon
+    npm install --save express socket.io
+    npm install --save mysql2
+  ```
+3. Install MySql __[Mysql](https://www.mysql.com/)__: 
+4. Load Trivia Questions into MySQL Database using script __[load_questions.sql)](https://github.com/mj0-git/Wheel-Of-Jeopardy/blob/master/database/load_questions.sql)__:
 
-# Minimal Increment Features List
+# Run:   
+Execute ``` nodemon server/server.js ``` and naviagte to ``` http://localhost:3000/ ``` in browser.
 
-1. Database for questions ->Caitlyn 
- - Press button on client, display question (or text message) on page 
+Homepage will display as shown below. 
 
-2. Chat messages between players -> Idress 
+![](./images/homepage.png)
 
-3. Server outputs message indicating when a user connects ->Andrea 
-  - Show that a session was created 
-  - Name of the users are displayed on everyone’s screens 
- 
-4. Show demo of an object moving on screen -> Meraj 
- - All players should be able to see the same object moving  
- - Referenced: https://devdojo.com/dennis/use-socketio-to-build-a-game#adding-our-variables
-
-5. Message on screen for everyone if user leaves (their session ends) -> Cedric 
- - Game should end if player can’t reconnect 
+__Note__, three players need to sign in in order to start a new game.
 

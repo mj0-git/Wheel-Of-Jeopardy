@@ -2,9 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\public",
+    "\\public\\audio",
     "\\public\\css",
     "\\public\\js",
     "\\server"
   ],
+  "SelectedNode": "\\public\\js\\app.js",
   "PreviewInSolutionExplorer": false
 }
